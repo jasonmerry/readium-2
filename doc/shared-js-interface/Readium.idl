@@ -13,7 +13,6 @@
  */
 interface CollectionItem {
 
-
     /**
      * Return the number of children of this CollectionItem
      * 
@@ -197,7 +196,7 @@ interface ErrorItem {
      * 
      * @return DOMString An empty string if there is no such string
      */
-    DOMString getErrorString ( errID );
+    DOMString getErrorString ( integer errID );
 }
 
 /**
@@ -305,7 +304,7 @@ interface HighlightItem {
      */
     void setColor ( DOMString color );
 
-   /**
+    /**
      * Set the opacity of this highlight
      * 
      * @param opacity In range of 0..1
@@ -404,9 +403,7 @@ interface MediaOverlay {
     /**
      * Check to see if the specified Location has a media overlay
      * 
-     * @param Location
-     *
-     * @return boolean 
+     * @param location the location to check for media overlay
      */
     void hasMediaOverlay ( Location location );
 
@@ -473,9 +470,9 @@ interface MediaOverlay {
     /**
      * Set the audio highlight color
      * 
-     * @param DOMString  CSS color syntax
+     * @param color  the color of the highlight, in CSS color syntax
      */
-    void setHighlightColor ( DOMString );
+    void setHighlightColor ( DOMString color );
 
     /**
      * Enable or disable scroll during playback
@@ -648,7 +645,7 @@ interface Navigator {
     /**
      * Returns the current location in the current spine item.  If no selection
      * then it returns the top-left (or top-right if r-t-l document) of the current 
-     * screen
+     * screenDOMString
      * 
      * @return Location 
      */
@@ -794,11 +791,11 @@ interface Navigator {
      * Return the location of the upper-left (ltr documents) or upper-right (for rtl 
      * documents) of the specified screen.
      * 
-     * @param integer  The number of the screen
+     * @param screen  The number of the screen
      * 
-     * @return Location 
+     * @return Location  The location for the specified screen
      */
-    Location getLocationFromScreen ( integer );
+    Location getLocationFromScreen ( integer screen );
 
     /**
      * Get the spine item that contains the specified Location
@@ -826,7 +823,7 @@ interface Navigator {
 interface Package {
 
     /**
-     * Returns the MetadataItem object which encapsulates the <metadata> 
+     * Returns the MetadataItem object which encapsulates the <c>metadata</c> 
      * element itself
      * 
      * The object is empty if there is an error or the metadata element
@@ -837,7 +834,7 @@ interface Package {
      MetadataItem getMetadataRoot();
 
     /**
-     * Returns the MetadataItem object which encapsulates the <manifest> 
+     * Returns the MetadataItem object which encapsulates the <c>manifest</c> 
      * element itself
      * 
      * @return ManifestItem 
@@ -845,7 +842,7 @@ interface Package {
     ManifestItem getManifestRoot();
 
     /**
-     * Returns the the MetadataItem object which encapsulates the <spine> 
+     * Returns the the MetadataItem object which encapsulates the <c>spine</c> 
      * element itself
      * 
      * @return SpineItem 
@@ -853,7 +850,7 @@ interface Package {
     SpineItem   getSpineRoot();
 
     /**
-     * Fetches the top-most <collection> element for the package, if any
+     * Fetches the top-most <c>collection</c> element for the package, if any
      * 
      * @return CollectionItem 
      */
@@ -938,7 +935,7 @@ interface PageLayout {
      * 
      * Note: If the document is not reflowable the method will return false
      *
-     * @param mode   @see REND_FLOW_* constants (above)
+     * @param mode   SEE REND_FLOW_* constants (above)
      * 
      * @return boolean 
      */
@@ -961,11 +958,11 @@ interface PageLayout {
      * 
      * Note: This may not be supported on some devices
      * 
-     * @param integer 
+     * @param width  Width in pixels
      *
      * @return boolean  False if request not supported
      */
-    boolean setWidth ( integer );
+    boolean setWidth ( integer width );
 
     /**
      * Returns the current width of the display surface (in pixels) available
@@ -1048,6 +1045,17 @@ interface ReadingSystem {
 interface Renderer {
 
     /**
+     * Initialize the renderer by passing in the div within which the 
+     * renderer should install its own rendering machinery (e.g. nested 
+     * iframes or similar)
+     *
+     * There can only be one call to this method per book.
+     * 
+     * @param div  The top-level div within which the document will be rendered
+     */
+    void initRenderer ( Object div );
+
+    /**
      * Returns the root highlight element which can be used to then 
      * traverse the current set of highlights associated with the
      * document.
@@ -1059,7 +1067,7 @@ interface Renderer {
     /**
      * Add a highlight to the current document. If the second location
      * is NULL the first Location MUST be a range.
-     * 
+     * integer
      * @param start    location to start the hightlight, or range if end param null
      * @param end      end location for the hightlight. Can be null if start is range
      * @param color    CSS-style color
@@ -1139,7 +1147,7 @@ interface Search {
      * @param findText    Text to find
      * @param callback    Function to be called with the results
      */
-    void  search ( Location startLoc, Location endLoc, integer modifiers, Object callback );   
+    void  search ( Location startLoc, Location endLoc, integer modifiers, DOMString findText, Object callback );   
 
 }
 
