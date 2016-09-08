@@ -260,7 +260,7 @@ interface Events {
 }
 
 /**
- * Provides methods to manage the current highlight item 
+ * @brief Provides methods to manage the current highlight item 
  * 
  */
 interface HighlightItem {
@@ -313,6 +313,11 @@ interface HighlightItem {
 
 }
 
+/**
+ * @brief Represents a single location, which may be a single point or 
+ * a range
+ * 
+ */
 interface Location {
 
     /** 
@@ -395,7 +400,7 @@ interface ManifestItem {
 }
 
 /**
- * A set of methods to provide access and control of media overlays
+ * @brief A set of methods to provide access and control of media overlays
  * 
  */
 interface MediaOverlay {
