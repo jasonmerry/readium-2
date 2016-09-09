@@ -975,7 +975,7 @@ interface PageLayout {
      * Note: If the document is fixed layout this will always return 
      * REND_FLOW_FIXED, indicating that the document is fixed layout
      * 
-     * @return integer 
+     * @return the constant that is the current rendition flow state 
      */
     integer getRenditionFlow();
 
@@ -986,9 +986,9 @@ interface PageLayout {
      * 
      * Note: This may not be supported on some devices
      * 
-     * @param width  Width in pixels
+     * @param width  the width in pixels
      *
-     * @return boolean  False if request not supported
+     * @return false if request not supported
      */
     boolean setWidth ( integer width );
 
@@ -1006,7 +1006,7 @@ interface PageLayout {
      * Note: If there is no synthetic spread the returned string will be 
      * empty.
      * 
-     * @return DOMstring  CSS units
+     * @return the width of the gutter in CSS units
      */
     DOMstring getGutterWidth();
 
@@ -1016,9 +1016,9 @@ interface PageLayout {
      * Note: Will fail if the document or reading system does not allow 
      * synthetic spreads
      *
-     * @param gutter CSS units
+     * @param width of the gutter in CSS units
      * 
-     * @return boolean 
+     * @return true if successful else false 
      */
     boolean setGutterWidth( DOMString gutter );
 }
@@ -1033,16 +1033,16 @@ interface ReadingSystem {
     /**
      * Get the name of the device (e.g browser or device)
      * 
-     * @return DOMString 
+     * @return the name of the device (if any) 
      */
     DOMString getName();
 
     /**
      * Returns a JSON object that has the size of the device, if available
      * 
-     * @return DOMString 
+     * @return SON array with the size of the deveice as { "width":num, "height":num } 
      */
-    DOMString getDeviceSize();
+    Object getDeviceSize();
 
     /**
      * Provides method of injecting user/app stylesheet such as 
@@ -1050,7 +1050,7 @@ interface ReadingSystem {
      * 
      * @param url to the stylesheet to be injected
      * 
-     * @return boolean  False if not supported
+     * @return false if not supported
      */
     boolean injectStyleSheet ( DOMString url );
 
@@ -1067,9 +1067,9 @@ interface ReadingSystem {
     /**
      * Get the ReadingSystemObject
      * 
-     * @return ReadingSystemObject Returns the current reading system object
+     * @return returns an object which implements the ReadingSystemObject interface
      */
-    ReadingSystemObject getRSO();
+    Object getRSO();
  }
 
 /**
@@ -1119,7 +1119,7 @@ interface ReadingSystemObject {
      *      spine-scripting
      \endcode
      *
-     * @return  true if feature supported, else false
+     * @return  true if feature supported else false
      */
     boolean hasFeature( DOMString feature, optional DOMString version );
 };
@@ -1136,7 +1136,7 @@ interface Renderer {
      * renderer should inject its own rendering machinery (e.g. nested 
      * iframes or similar)
      *
-     * There can only be one call to this method per book.
+     * There can only be one call to this method per document.
      * 
      * @param  the top-level div within which the document will be rendered
      */
@@ -1147,9 +1147,9 @@ interface Renderer {
      * traverse the current set of highlights associated with the
      * document.
      * 
-     * @return the root element of the highlights collection 
+     * @return the object which implements the HighlightItem interface 
      */
-    HighlightItem  getHighlightsRoot();
+    Object  getHighlightsRoot();
 
     /**
      * Add a highlight to the current document. If the second location
@@ -1260,14 +1260,14 @@ interface Selection {
      *
      * QUESTION: What if it includes image(s), either raster or SVG?
      * 
-     * @return DOMString 
+     * @return the text of the current selection.  Empty if there is no selection 
      */
     DOMString   getText();
 
     /**
      * Get current location of the selection
      * 
-     * @return Location Is empty if there is no current selection
+     * @return is empty if there is no current selection
      */
     Location    getLocation();
 }
@@ -1289,23 +1289,23 @@ interface SpineItem {
     /**
      * Fetch the specified child of the current SpineItem
      *    
-     * @param index 
+     * @param 0-based index of the item to fetch 
      * 
-     * @return TOCItem  null if there isn't one
+     * @return  the item, null if there isn't one
      */
     NavDocItem  getChild( integer index );
 
     /**
      * Returns the DOM3 Node type value for the current item.
      * 
-     * @return integer 
+     * @return DOM3 Nove type value for the item 
      */
     integer   getNodeType();
 
     /**
      * Get the Idref of the element
      * 
-     * @return DOMString 
+     * @return the ideref of the spine item wrapped in this item 
      */
     DOMString   getIdref();
 
@@ -1325,7 +1325,7 @@ interface SpineItem {
      * @return the JSON array that holds the complete set of attributes 
      */    
     Object getAttributes();
-}
+} 
 
 /**
  * @brief Interface to enable controlling the way in which text on a page
@@ -1337,7 +1337,7 @@ interface TextRendering {
     /**
      * Returns the distance (in CSS units) between baselines in the current font
      * 
-     * @return DOMString 
+     * @return the lineHeight expressed in CSS units 
      */
     DOMString getLineHeight();
 
@@ -1346,9 +1346,9 @@ interface TextRendering {
      *  
      * Note that this call will fail for fixed layout pages and return false.
      *
-     * @return boolean 
+     * @return true if the line-height was altered else false 
      */
-    boolean setLineHeight();
+    boolean setLineHe ight();
 
     /**
      * Returns the number of columns the screen is laid out in.
@@ -1356,7 +1356,7 @@ interface TextRendering {
      * Note that this is columns within a single page, not whether
      * the screen is laid as a synthetic spread or not. @see synthetic spread
      * 
-     * @return integer 
+     * @return number of columns 
      */
     integer getNumColumns();
 
@@ -1366,7 +1366,7 @@ interface TextRendering {
      * Note that this is columns within a single page, not whether
      * the screen is laid as a synthetic spread or not. @see synthetic spread
      * 
-     * @return boolean true if successful, false if not supported
+     * @return true if successful false if not supported
      */
     boolean setNumColumns();
 
@@ -1375,7 +1375,7 @@ interface TextRendering {
      * between pages in a spread).  Will be empty if multiple columns are not 
      * supported.
      * 
-     * @return DOMString In CSS lengths. 
+     * @return the column gap in CSS lengths. 
      */
     DOMString getColumnGap();
 
@@ -1385,16 +1385,16 @@ interface TextRendering {
      * Note that this will apply to the whole document, not just the 
      * current screen
      * 
-     * @param justify Type of justification (CSS enumeration: left, right, center or justify)
+     * @param  type of justification (CSS enumeration: left, right, center or justify)
      *
-     * @return boolean true if successful, false if not supported
+     * @return true if successful false if not supported
      */
     boolean setJustification ( DOMString justify );
 
     /**
      * Returns the justification setting for the current document
      *  
-     * @return DOMString justify Type of justification (CSS enumeration: left, right, center or justify)
+     * @return type of justification (CSS enumeration: left, right, center or justify)
      */
     DOMString getJustification();
 
@@ -1403,7 +1403,7 @@ interface TextRendering {
      * 
      * Note:  Will be empty for fixed-layout documents
      * 
-     * @return DOMString   CSS fashion (all, or top, right, bottom, left)
+     * @return the margins string in CSS fashion (all, or top, right, bottom, left)
      */
     DOMString getMargins();
 
@@ -1412,23 +1412,23 @@ interface TextRendering {
      * 
      * Note: Will return false for fixed-layout documents
      * 
-     * @param margins CSS syntax (all, or top, right, bottom, left)
+     * @param desired margins in CSS syntax (all, or top, right, bottom, left)
      * 
-     * @return boolean 
+     * @return true if successful false if ignored or not supported 
      */
     boolean setMargins( DOMstring margins );
 
     /**
      * Sets the color of the current font
      * 
-     * @param fontColor  In CSS color syntax
+     * @param the fontColor in hexadecimal CSS color syntax
      */
     void setFontColor ( DOMString fontColor );
 
     /**
      * Returns the current font color for the document
      * 
-     * @return DOMString In CSS color syntax
+     * @return font color in hexadecimal CSS color syntax
      */
     DOMString getFontColor();
 
@@ -1437,7 +1437,7 @@ interface TextRendering {
      * 
      * Note: Returns empty string for fixed layout spine items
      * 
-     * @return DOMString   CSS length
+     * @return font height in CSS length syntax
      */
     DOMString getFontHeight();
 
@@ -1446,9 +1446,9 @@ interface TextRendering {
      * 
      * Note: Will fail and return false for fixed layout spine items
      *
-     * @param fontHeight In CSS length
+     * @param the fontHeight in CSS length syntax
      * 
-     * @return boolean 
+     * @return true if successful else false 
      */
     boolean setFontHeight( DOMString fontHeight );
 
@@ -1467,9 +1467,9 @@ interface TextRendering {
      * 
      * Note: Will fail for fixed layout spine items
      * 
-     * @param fontFace 
+     * @param the desired font-face 
      * 
-     * @return boolean False if not supported
+     * @return true if successful false if not supported
      */
     boolean setFontFace ( DOMString fontFace );
 };
@@ -1485,14 +1485,14 @@ interface Transform {
     /**
      * Returns the current zoom level for the current screen
      *  
-     * @return float 
+     * @return the current zoom factor 
      */
     float getZoom();
 
     /**
      * Sets the current zoom level for the page
      * 
-     * @param zoom 
+     * @param the desire zoom factor
      */
     void setZoom( float zoom );
 }
