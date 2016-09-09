@@ -24,32 +24,42 @@ interface CollectionItem {
      * Fetch the specified child of the current CollectionItem
      * Returns null if there isn't one
      *    
-     * @param index 
+     * @param 0-based index of the item to fetch
      * 
-     * @return NavDocItem 
+     * @return object that implements the the CollectionItem interface 
      */
-    NavDocItem  getChild( integer index );
+    Object  getChild( integer index );
 
     /**
      * Returns the DOM3 Node type value for the current item.
      * 
-     * @return integer 
+     * @return the DOM3 Node type 
      */
     integer   getNodeType();
 
     /**
-     * Get the name of the element
+     * Get the short name of the element that the CollectionItem wraps
      * 
-     * @return DOMString 
+     * @return string that is the name of the item's element 
      */
     DOMString   getItemName();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this item
+     * Returns a JSON object that is the complete set of attributes for this 
+     * item, where the array is of the form:
      * 
-     * @return DOMString 
+     \code
+     *   [
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value }
+     *                   etc.
+     *   ]
+     \endcode
+
+     * @return the JSON array that holds the complete set of attributes 
      */
-    DOMString getAttributes();
+    Object getAttributes();
 
 }
 
@@ -63,30 +73,29 @@ interface CollectionItem {
 interface Document {
 
     /**
-     * Basic method to open an EPUB.  Also initializes the underlying renderer and
-     * performs any other initialization required.
+     * Basic method to open an EPUB.  Also performs any other initialization required.
      *        
-     * @param url 
+     * @param url to the EPUB to be opened
      *
-     * @return boolean true if successful, else false
+     * @return true if successful, else false
      */
     boolean openBook ( DOMString url );
 
     /**
      * Return the OPF package (or equivalent) for the document
      * 
-     * @return Package 
+     * @return an object that implements the Package interface 
      */
-    Package getPackage();
+    Object getPackage();
 
     /**
      * Returns the root item of the error list. This is presumably a tree or list, 
      * but the item should be a normal tree item in behaviour even if the set of
      * errors is a flat list.
      * 
-     * @return ErrorItem 
+     * @return an object that implements the ErrorItem interface
      */
-    ErrorItem getErrorRoot();
+    Object getErrorRoot();
 
     /**
      * Clear the current error list.
@@ -94,55 +103,13 @@ interface Document {
     void clearErrorList();
    
     /**
-     * Fetch the associated nav doc for the EPUB. 
-     * Object will be null if not available (which is a fatal error).
+     * Fetch the an object that wraps the root element (an <c>xhtml</c> element) 
+     * of the associated navdoc for the EPUB. 
      * 
-     * @return NavDocItem  root of the XHTML document which is the NavDoc
+     * @return an object that implements the NavDocItem interface
      */
-    NavDocItem getNavDoc();
+    Object getNavDoc();
 }
-
-/**
- * @brief The official EPUB reading system object. Interface defined in 
- * the EPUB spec here (provide link to 3.1)
- * 
- */
-interface EPUBReadingSystem {
-
-    /**
-     * The name of the reading system 
-     *
-     * @return DOMString The name
-     */
-    DOMString getName();
-
-    /**
-     * Returns the version of the reading system
-     * 
-     * @return DOMString 
-     */
-    DOMString getVersion();
-
-    /**
-     * Returns the type of layout
-     * 
-     * deprecated in 3.1??? - TODO check this
-     * 
-     * @return DOMString 
-     */
-    DOMString layoutStyle();
-
-    /**
-     * General query method.  Returns true or false depending on whether the feature is
-     * supported by the current reading system.
-     *
-     * As of 3.1, the queries that should be supported include:
-     *      TODO fill out the list
-     *
-     * @return boolean  true if feature supported, else false
-     */
-    boolean hasFeature( DOMString feature, optional DOMString version );
-};
 
 /**
  * @brief Provides access to the current error list.
@@ -158,32 +125,32 @@ interface ErrorItem {
     const integer INFO        = 3;
 
     /**
-     * Get the number of children (errors) in the current error list (level)
+     * Get the number of children (errors) in the current error list (or level)
      * 
-     * @return integer Number of children
+     * @return the number of children
      */
     integer getChildCount();
 
     /**
      * Returns the indicated child error item.
      * 
-     * @param index 
+     * @param 0-based index in the list to return
      * 
-     * @return ErrorItem  
+     * @return an object that implements the ErrorItem interface
      */
-    ErrorItem   getChild ( integer index );
+    Object   getChild ( integer index );
 
     /**
      * Returns the error's ID value
      *  
-     * @return integer 
+     * @return the ID of the ErrorItem 
      */
     const integer getID();
 
     /**
      * Return the severity of the specified error item 
      *   
-     * @return const integer 
+     * @return an integer which represents the severity of the error 
      */
     const integer getSeverity ();
 
@@ -191,10 +158,12 @@ interface ErrorItem {
      * Returns the string representation of the error, if any. The intent
      * here is that the implementation may have a database of strings that 
      * correspond to the set of possible error IDs
+     *
+     * Returns an empty string if no such string exists.
      * 
-     * @param errID 
+     * @param the ID of the string to be returned 
      * 
-     * @return DOMString An empty string if there is no such string
+     * @return the string corresponding to the error ID
      */
     DOMString getErrorString ( integer errID );
 }
@@ -226,8 +195,8 @@ interface Events {
      * Attach a handler for a specific, enumerated Readium event, such as 
      * READER_INITIALIZED
      * 
-     * @param eventID  The enumerated value of the event to be handled
-     * @param callback A callback function to be called when the event is emitted
+     * @param the enumerated value of the event to be handled
+     * @param a callback function to be called when the event is emitted
      */
     void attachHandlerForEventID ( integer eventID, Object callback );
 
@@ -243,18 +212,18 @@ interface Events {
     /**
      * Add a handler for a named event (e.g. onmousedown) to a specific object
      * 
-     * @param object     The object to which the handler should be attached
-     * @param eventName  The name of the event
-     * @param callback   The handler to be called
+     * @param object     the object to which the handler should be attached
+     * @param eventName  the name of the event
+     * @param callback   the handler to be called
      */
     void addHandlerForEvent ( Object object, DOMString eventName, Object callback );
 
     /**
      * Remove a previously added handler from a specific object
      * 
-     * @param object     The object to which the handler was attached
-     * @param eventName  The name of the event being handled
-     * @param callback   The callback function that was being called
+     * @param object     the object to which the handler was attached
+     * @param eventName  the name of the event being handled
+     * @param callback   the callback function that was being called
      */
     void removeHandlerForEvent ( Object object, DOMString eventName, Object callback );
 }
@@ -268,49 +237,62 @@ interface HighlightItem {
     /**
      * Returns the unique ID for this HighlightItem
      * 
-     * @return DOMString 
+     * @return a GUID that is the ID of this item 
      */
     DOMString getGUID();
 
     /**
      * Get the number of children of this item
      * 
-     * @return integer 
+     * @return number of children of this item 
      */
     integer getChildCount();
 
     /**
      * Returns the indicated child item.
      * 
-     * @param index 0-based index of the child item
+     * @param 0-based index of the child item
      * 
-     * @return HighlightItem  
+     * @return an object which implements the HighlightItem interface  
      */
-    ErrorItem getChild ( integer index );
+    Object getChild ( integer index );
 
     /**
      * Remove the specified child
      * 
-     * @param index 
+     * @param 0-based index of the item to be removed 
      * 
-     * @return boolean True if successful, false on error
+     * @return true if successful, false on error
      */
     boolean removeChild (integer index );
 
     /**
      * Set the color of this highlight (CSS color)
      * 
-     * @param color  CSS color
+     * @param the hexadecimal CSS syntax color to be set
      */
     void setColor ( DOMString color );
 
     /**
+     * Get the color of the current item's highlight
+     * 
+     * @return color of the highlight in hexadecimal CSS syntax 
+     */
+    DOMString getColor ();
+
+    /**
      * Set the opacity of this highlight
      * 
-     * @param opacity In range of 0..1
+     * @param opacity in range of 0..1
      */
     void setOpacity ( float opacity );
 
+    /**
+     * Returns the opacity of the current item's highlight
+     *  
+     * @return opacity of the current highlight, in the range 0..1 
+     */
+    float getOpacity();
 }
 
 /**
@@ -322,11 +304,15 @@ interface Location {
 
     /** 
      * Returns the location in the document, expressed as a CFI 
+     *
+     * @return the CFI string representing the location
      */
     DOMString getLocation();
 
     /** 
      * Returns whether the current location is precisely known 
+     *
+     * @return true if precisely known, else false
      */
     boolean getLocationPrecision();
 
@@ -348,8 +334,8 @@ interface Location {
      * 
      *    <c>precise</c> will be true if the CFI match is precise, else false
      *
-     * @param otherLoc Location to be compared to this one
-     * @param callback Function to be called with results
+     * @param the other location to be compared to this one
+     * @param the function to be called with results
      *  
      */
     void compare ( DOMString otherLoc, Object callback);
@@ -364,39 +350,49 @@ interface ManifestItem {
    /**
      * Returns the number of children of this item.
      * 
-     * @return integer 
+     * @return the number of children of this item 
      */
     integer getChildCount();
 
     /**
      * Returns the specified ManifestChildItem, if any.
      * 
-     * @param index 
+     * @param 0-based index of the item to be fetched 
      * 
-     * @return ManifestItem 
+     * @return an object which implements the ManifestItem interface 
      */
-    ManifestItem getChild( integer index );
+    Object getChild( integer index );
 
     /**
      * Returns the DOM3 Node type value for the current item.
      * 
-     * @return integer 
+     * @return the DOM3 Node type for the element wrapped by this item 
      */
     integer   getNodeType();
 
     /**
-     * Returns the name of this metadata item 
+     * Returns the short name of the element which this item wraps 
      * 
-     * @return DOMString 
+     * @return the short name of the element wrapped by this item 
      */
     DOMString getName();
 
     /**
-     * Returns a JSON object that is the complete set of attributes
+     * Returns a JSON object that is the complete set of attributes for this 
+     * item, where the array is of the form:
      * 
-     * @return DOMString 
+     \code
+     *   [
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value }
+     *                   etc.
+     *   ]
+     \endcode
+
+     * @return the JSON array that holds the complete set of attributes 
      */
-    DOMString getAttributes();
+    Object getAttributes();
 }
 
 /**
@@ -454,28 +450,28 @@ interface MediaOverlay {
     /**
      * Turn on or off touch-to-play capability
      * 
-     * @param enable  true enables touch-to-play, false disables it
+     * @param  true enables touch-to-play, false disables it
      */
     void setTouchToPlay ( boolean enable );
 
     /**
-     * Set the audio playback rage
+     * Set the audio playback rate
      * 
-     * @param rate in the range 0.1 .. 5
+     * @param rate in the range 0.1 to 4.0 
      */
     void setPlaybackRate ( float rate );
 
     /**
      * Set the relative audio volume
      * 
-     * @param volume  In percent, from 0 to 100%
+     * @param the relative volume in percent, from 0 to 100%
      */
     void setAudioVolume ( float volume );
 
     /**
      * Set the audio highlight color
      * 
-     * @param color  the color of the highlight, in CSS color syntax
+     * @param the color of the highlight, in hexadecimal CSS syntax
      */
     void setHighlightColor ( DOMString color );
 
@@ -510,39 +506,50 @@ interface MetadataItem {
     /**
      * Returns the number of children of this item.
      * 
-     * @return integer 
+     * @return the number of children of this item 
      */
     integer getChildCount();
 
     /**
      * Returns the specified MetadataItem, if any.
      * 
-     * @param index 
+     * @param 0-based index of the item to be fetched 
      * 
-     * @return MetadataItem 
+     * @return an object which implements the MetadataItem interface 
      */
-    MetadataItem getChild( integer index );
+    Object getChild( integer index );
 
     /**
-     * Returns the DOM3 Node type value for the current item.
+     * Returns the DOM3 Node type value for the element wrapped 
+     * by this item
      * 
-     * @return integer 
+     * @return the DOM3 Node type value  
      */
     integer   getNodeType();
 
     /**
-     * Returns the name of this metadata item 
+     * Returns the short name of the element wrapped by this item 
      * 
-     * @return DOMString 
+     * @return the short name for this item's element 
      */
     DOMString getName();
 
-    /**
-     * Returns a JSON object that is the complete set of attributes
+     /**
+     * Returns a JSON object that is the complete set of attributes for this 
+     * item, where the array is of the form:
      * 
-     * @return DOMString 
+     \code
+     *   [
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value }
+     *                   etc.
+     *   ]
+     \endcode
+
+     * @return the JSON array that holds the complete set of attributes 
      */
-    DOMString getAttributes();
+    Object getAttributes();
 
     /**
      * Returns metadata item's property value, if any.
@@ -554,7 +561,7 @@ interface MetadataItem {
     /**
      * Returns the refines reference value, if any.  Empty if none
      * 
-     * @return DOMString 
+     * @return the refine's reference value 
      */
     DOMString getRefines();
 
@@ -569,13 +576,13 @@ interface MetadataItem {
 
     /**
      * Recursively searches the current item and its children for the metadata item
-     * with the specified property.
+     * with the specified name and specified property.
      * 
      * @param property   Name of the property
      * 
-     * @return MetadataItem  Null if not found
+     * @return an object which implements the MetadataItem interface. Null if not found
      */
-    MetadataItem findProperty ( DOMString property );
+    Object findProperty ( DOMString elementName, DOMString property );
 }
 
 /**
@@ -588,7 +595,7 @@ interface  NavDocItem {
     /**
      * Return the number of children of this NavDocItem
      * 
-     * @return integer 
+     * @return the number of children 
      */
     integer getChildCount();
 
@@ -596,16 +603,17 @@ interface  NavDocItem {
      * Fetch the specified child of the current NavDocItem
      * Returns null if there isn't one
      *    
-     * @param index 
+     * @param 0-based index of the item to be fetched 
      * 
-     * @return NavDocItem 
+     * @return an object which implements the NavDocItem interface 
      */
     NavDocItem  getChild( integer index );
 
     /**
-     * Returns the DOM3 Node type value for the current item.
+     * Returns the DOM3 Node type value for the element wrapped by 
+     * the current item.
      * 
-     * @return integer 
+     * @return the Node type value  
      */
     integer   getNodeType();
 
@@ -620,16 +628,26 @@ interface  NavDocItem {
      * Returns the value of the epub:type attribute if any.
      * Returns empty if there is no such attribute.
      * 
-     * @return DOMString 
+     * @return the value (text) of the attribute.  Empty if none 
      */
     DOMString   getEPUBType();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this item
+     * Returns a JSON object that is the complete set of attributes for this 
+     * item, where the array is of the form:
      * 
-     * @return DOMString 
+     \code
+     *   [
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value }
+     *                   etc.
+     *   ]
+     \endcode
+
+     * @return the JSON array that holds the complete set of attributes 
      */
-    DOMString getAttributes();
+     Object getAttributes();
 }
 
 /**
@@ -643,16 +661,16 @@ interface Navigator {
      * Navigate such that the specified location is at the top left of the 
      * displayed screen (if ltr doc, else top right).
      *
-     * @param loc 
+     * @param the location to navigate to 
      */
     void gotoLocation ( Location loc );
 
     /**
      * Returns the current location in the current spine item.  If no selection
      * then it returns the top-left (or top-right if r-t-l document) of the current 
-     * screenDOMString
+     * screen
      * 
-     * @return Location 
+     * @return the CFI that represents the current location 
      */
     Location getCurrentLocation();
 
@@ -665,7 +683,7 @@ interface Navigator {
      * QUESTION: Should simple page turns be saved?  Or only higher 
      * level actions such as gotoLocation, gotoEnd, etc.?
      * 
-     * @return Location 
+     * @return a Location that represents the previous location 
      */
     Location getPreviousLocation();
 
@@ -687,7 +705,7 @@ interface Navigator {
      * Returns, as accurately as possible, the location of the top left (for 
      * ltr doc) or top-right location (for rtl docs) of the current screen
      *
-     * @return Location 
+     * @return a Location that represents the "beginning" of the current screen 
      */
     Location getScreenBegin();
 
@@ -695,7 +713,7 @@ interface Navigator {
      * Returns, as accurately as possible, the location of the lower right (for 
      * ltr doc) or lower-left location (for rtl docs) of the current screen
      *
-     * @return Location 
+     * @return a Location that represents the "end" of the current screen
      */
     Location getScreenEnd();
 
@@ -703,7 +721,7 @@ interface Navigator {
      * Returns, as accurately as possible, the location of the top left (for 
      * ltr doc) or top-right location (for rtl docs) of the first screen in the doc
      *
-     * @return Location 
+     * @return a Location that represents the "beginning" of the current document  
      */
     Location getDocBegin();
 
@@ -711,30 +729,30 @@ interface Navigator {
      * Returns, as accurately as possible, the location of the lower right (for 
      * ltr doc) or lower-left location (for rtl docs) of the last screen in the doc
      *
-     * @return Location 
+     * @return a Location that represents the "end" of the current document 
      */
     Location getDocEnd();
 
     /**
      * Returns true if the current screen is the first screen in the document
      * 
-     * @return boolean 
+     * @return true if the first screen, else false 
      */
     boolean isFirstScreen();
 
     /**
      * Returns true if the current screen is the last one in the document (.
      * 
-     * @return boolean 
+     * @return true if the last screen, else false 
      */
     boolean isFinalScreen();
 
     /**
      * Returns true if the current screen is the first screen in the current
-     * spiineItem (for reflowable spine items).  Always returns true for fixed 
+     * spine item (for reflowable spine items).  Always returns true for fixed 
      * layout spine items.
      * 
-     * @return boolean 
+     * @return true if it is the first screen else false 
      */
     boolean isFirstScreenSpine();
 
@@ -742,7 +760,7 @@ interface Navigator {
      * Returns true if the current screen is the last one in the spine item (for
      * reflowable documents).  Always returns true for fixed layout spine items.
      * 
-     * @return boolean 
+     * @return true if the last screen else false 
      */
     boolean isFinalScreenSpine();
 
@@ -752,33 +770,34 @@ interface Navigator {
      *
      * QUESTION:  Should this be callback-based?
      * 
-     * @return integer 
+     * @return number of screens in this spine item 
      */
     integer getScreenCountSpine();
 
     /**
      * Returns the total number of screens in the document (for reflowable documents)
      * or the total number of pages (for fixed layout documents).
+     *
      * The  parameter is the callback function that will be called
      * when the count is complete.\n
      * The signature of the callback function must be:
      *
-     *    <i>callback( integer:result )</i>
+     *    <c>callback( integer:result )</c>
      *
      * where
      *
-     *    <i>result</i> will be the number of screens in the document\n  
+     *    <c>result</c> will be the number of screens in the document\n  
      *
-     * @param callback Function to be called with results
+     * @param the callback function to be called with the count
      *  
      */
     void getScreenCount( Object callback );
 
     /**
      * Navigates to the specified screen (for reflowable) or page (for fixed
-     * layout)
+     * layout).  Note that the first screen in the document would be screen 0
      * 
-     * @param screenNum 
+     * @param 0-based index of the screen to navigate to 
      */
     void gotoScreen ( integer screenNum );
 
@@ -786,9 +805,9 @@ interface Navigator {
      * Returns the screen (or page) number for the specified location in the 
      * document.
      * 
-     * @param loc 
+     * @param location whose screen is to be determined 
      * 
-     * @return integer 
+     * @return the 0-based index of the screen which contains the location
      */
     integer getScreenFromLocation ( Location loc );
 
@@ -805,18 +824,22 @@ interface Navigator {
     /**
      * Get the spine item that contains the specified Location
      * 
-     * @return SpineItem 
+     * @return an object that implements the SpineItem interface 
      */
-    SpineItem getSpineItemFromLocation();
+    Object getSpineItemFromLocation();
 
     /**
      * Returns a JSON object that has the bounding box enclosed by the start
      * Location (if a range) or the two Locations
+     *
+     * The bbox is returned as the x and y coordinate and the height and width
+     * of the box. All values in pixels with the origin of the coordinate system 
+     * in the upper left of the current screen
      * 
-     * @param start 
-     * @param end 
+     * @param the starting location for the bounding box 
+     * @param the end location for the bounding box 
      * 
-     * @return Object  JSON object with top, right, bottom, left as CSS lengths
+     * @return  a JSON object of the form <c>{ "x":num, "y":num, "width":num, "height":num }</c>
      */
     Object getBoundingBox ( Location start, Location end );
 }
@@ -828,43 +851,43 @@ interface Navigator {
 interface Package {
 
     /**
-     * Returns the MetadataItem object which encapsulates the <c>metadata</c> 
+     * Returns a MetadataItem object which encapsulates the <c>metadata</c> 
      * element itself
      * 
      * The object is empty if there is an error or the metadata element
      * does not exist or is empty (which is a fatal error itself).
      *
-     * @return MetadataItem 
+     * @return an object which implements the MetadataItem interface 
      */
-     MetadataItem getMetadataRoot();
+     Object getMetadataRoot();
 
     /**
-     * Returns the MetadataItem object which encapsulates the <c>manifest</c> 
+     * Returns a ManifestItem object which encapsulates the <c>manifest</c> 
      * element itself
      * 
-     * @return ManifestItem 
+     * @return an object which implements the ManifestItem interface 
      */
-    ManifestItem getManifestRoot();
+    Object getManifestRoot();
 
     /**
-     * Returns the the MetadataItem object which encapsulates the <c>spine</c> 
+     * Returns a SpineItem object which encapsulates the <c>spine</c> 
      * element itself
      * 
-     * @return SpineItem 
+     * @return an object which implements the SpineItem interface 
      */
-    SpineItem   getSpineRoot();
+    Object   getSpineRoot();
 
     /**
      * Fetches the top-most <c>collection</c> element for the package, if any
      * 
-     * @return CollectionItem 
+     * @return an object which implements the CollectionItem interface 
      */
-    CollectionItem  getCollectionRoot(); 
+    Object  getCollectionRoot(); 
      
     /**
      * Returns a URL to the cover image from this package, if there is one
      * 
-     * @return DOMString 
+     * @return url to the location of the cover image 
      */
     DOMString getCoverImage();
 }
@@ -896,7 +919,7 @@ interface PageLayout {
     /**
      * Returns the current document-level rendition layout parameter 
      * 
-     * @return integer  paginated or reflowable
+     * @return an integer constant that indicates paginated or reflowable
      */
     integer getRenditionLayout();
 
@@ -906,16 +929,16 @@ interface PageLayout {
      * Note: The reading system may ignore this setting, in which case
      * the return value is false.
      * 
-     * @param orient 
+     * @param the desired orientation (see constants above) 
      *
-     * @return boolean
+     * @return true if not ignored else false
      */
     boolean setRenditionOrientation ( integer orient );
 
     /**
      * Returns the document-level rendition orientation
      * 
-     * @return integer 
+     * @return the current rendition-orientation setting (see constants above)
      */
     integer getRenditionOrientation();
 
@@ -924,9 +947,9 @@ interface PageLayout {
      * 
      * Note: This may fail if the document is set to Spread:None 
      * 
-     * @param spread 
+     * @param the current layout mode (see constants above)
      */
-    boolean setRenditionSpread (integer spread );
+    boolean setRenditionSpread ( integer spread );
 
     /**
      * Return the document-level rendition:spread property or setting
@@ -940,9 +963,9 @@ interface PageLayout {
      * 
      * Note: If the document is not reflowable the method will return false
      *
-     * @param mode   SEE REND_FLOW_* constants (above)
+     * @param the dessired rendition flow mode   (see constants above)
      * 
-     * @return boolean 
+     * @return true if not ignored else false 
      */
     boolean setRenditionFlow ( integer mode );
 
@@ -1040,7 +1063,66 @@ interface ReadingSystem {
      * @return boolean False if not supported
      */
     boolean injectJavaScript ( DOMString url );
+
+    /**
+     * Get the ReadingSystemObject
+     * 
+     * @return ReadingSystemObject Returns the current reading system object
+     */
+    ReadingSystemObject getRSO();
  }
+
+/**
+ * @brief The official EPUB reading system object. Interface defined in 
+ * the EPUB spec here (provide link to 3.1)
+ * 
+ */
+interface ReadingSystemObject {
+
+    /**
+     * The name of the reading system 
+     *
+     * @return The name of the reading system, if any
+     */
+    DOMString getName();
+
+    /**
+     * Returns the version of the reading system.\n
+     * This returns a JSON array of the form:
+     *  
+     \code
+     *   [
+     *      { module:name, version:commit-hash },
+     *      { module:name, version:commit-hash },
+     *      { module:name, version:commit-hash }
+     *                     etc.
+     *   ]
+     \endcode
+     *
+     * @return  a JSON array with the version info
+     */
+    Object getVersion();
+
+    /* Note:  Not supporting getLayoutStyle, which is now deprecated as of  EPUB 3.1 */
+
+    /**
+     * General query method.  Returns true or false depending on whether the feature is
+     * supported by the current reading system.
+     *
+     * As of 3.1, the queries that should be supported include:
+     \code
+     *      dom-manipulation
+     *      layout-changes
+     *      touch-events
+     *      mouse-events
+     *      keyboard-events
+     *      spine-scripting
+     \endcode
+     *
+     * @return  true if feature supported, else false
+     */
+    boolean hasFeature( DOMString feature, optional DOMString version );
+};
 
 /**
  * @brief Encapsulates the various rendering capabilities, currently 
@@ -1051,12 +1133,12 @@ interface Renderer {
 
     /**
      * Initialize the renderer by passing in the div within which the 
-     * renderer should install its own rendering machinery (e.g. nested 
+     * renderer should inject its own rendering machinery (e.g. nested 
      * iframes or similar)
      *
      * There can only be one call to this method per book.
      * 
-     * @param div  The top-level div within which the document will be rendered
+     * @param  the top-level div within which the document will be rendered
      */
     void initRenderer ( Object div );
 
@@ -1065,20 +1147,20 @@ interface Renderer {
      * traverse the current set of highlights associated with the
      * document.
      * 
-     * @return HighlightItem 
+     * @return the root element of the highlights collection 
      */
     HighlightItem  getHighlightsRoot();
 
     /**
      * Add a highlight to the current document. If the second location
      * is NULL the first Location MUST be a range.
-     * integer
+     * 
      * @param start    location to start the hightlight, or range if end param null
      * @param end      end location for the hightlight. Can be null if start is range
      * @param color    CSS-style color
      * @param opacity  opacity in the range of 0..1
      *
-     * @return DOMString The GUID that uniquely identifies this highlight.
+     * @return the GUID that uniquely identifies this highlight
      */
     DOMString addHighlight ( Location start, Location end, DOMString color, float opacity );
 
@@ -1090,23 +1172,31 @@ interface Renderer {
     /**
      * Delete the specified highlight
      * 
-     * @param item 
+     * @param deletes the specified highlight from the collection 
      */
-    void clearHighlight( HighlightItem item );
+    void deleteHighlight( HighlightItem item );
 
     /**
-     * Attach a handler that will be called when a highlight is selected. The 
-     * handler will be passed the HighlightItem that has been selected.
+     * Attach a handler that will be called when any highlight is selected. The 
+     * handler will be passed the HighlightItem that has been selected
+     *
+     * The signature of the callback function MUST be
+     *
+     *    <c>callback(Object:item)</c>
+     
+     * where
+     *
+     *   <c>item</c> is the HighlightItem selected
      * 
-     * @param handler 
+     * @param attaches the supplied handler to the highlights collection 
      */
     void attachHandlerForHighlights( Object handler );
 
     /**
      * Remove handler for hit-testing on highlights.  The supplied object is 
-     * to ID the correct handler to remove.
+     * used to identify the correct handler to remove.
      * 
-     * @param handler 
+     * @param the handler to remove
      */
     void removeHandlerForHighlights( Object handler );
 
@@ -1128,6 +1218,8 @@ interface Search {
     /**
      * Searches for ALL succesful results for the specified string between the 
      * start and end locations.  
+     * Note: If the search is backwards or the document is rtl, then the start location
+     * will be closer to the end of the document than the end location
      * Callback is the function to be called with the results.
      * 
      * The signature of the callback function MUST be
@@ -1139,10 +1231,10 @@ interface Search {
      *   <c>results</c> is a JSON array of the form:\n
      \code
      *   [
-     *      { start:loc, end:loc, result:text },
-     *      { start:loc, end:loc, result:text },
-     *      { start:loc, end:loc, result:text }
-     *                     etc.
+     *      { "start":loc, "end":loc, "result":text },
+     *      { "start":loc, "end":loc, "result":text },
+     *      { "start":loc, "end":loc, "result":text }
+      *                     etc.
      *   ]
      \endcode
      * 
@@ -1218,11 +1310,21 @@ interface SpineItem {
     DOMString   getIdref();
 
     /**
-     * Returns a JSON object that is all the attributes of this spine item
+     * Returns a JSON object that is the complete set of attributes for this 
+     * item, where the array is of the form:
      * 
-     * @return DOOMString 
-     */
-    DOOMString getAttributes();
+     \code
+     *   [
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value },
+     *      { "name":name, "value":value }
+     *                   etc.
+     *   ]
+     \endcode
+
+     * @return the JSON array that holds the complete set of attributes 
+     */    
+    Object getAttributes();
 }
 
 /**
