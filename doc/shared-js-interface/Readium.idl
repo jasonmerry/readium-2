@@ -24,7 +24,7 @@ interface CollectionItem {
      * Fetch the specified child of the current CollectionItem
      * Returns null if there isn't one
      *    
-     * @param 0-based index of the item to fetch
+     * @param index   0-based index of the item to fetch
      * 
      * @return object that implements the the CollectionItem interface 
      */
@@ -50,9 +50,9 @@ interface CollectionItem {
      * 
      \code
      *   [
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value }
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string }
      *                   etc.
      *   ]
      \endcode
@@ -64,7 +64,7 @@ interface CollectionItem {
 }
 
 /**
- * @brief The fundamental interface for the SDK implementation.  Represents the current 
+ * @brief The fundamental interface for the Readium implementation.  Represents the current 
  * open EPUB document.  Provides access to the document's OPF and its contents 
  * as well as rendering, etc.  In addition, it provides access to the underlying 
  * rendering and navigation engine (typically a browser engine).
@@ -75,7 +75,7 @@ interface Document {
     /**
      * Basic method to open an EPUB.  Also performs any other initialization required.
      *        
-     * @param url to the EPUB to be opened
+     * @param url   the url to the EPUB to be opened
      *
      * @return true if successful, else false
      */
@@ -134,12 +134,28 @@ interface ErrorItem {
     /**
      * Returns the indicated child error item.
      * 
-     * @param 0-based index in the list to return
+     * @param index   0-based index in the list to return
      * 
-     * @return an object that implements the ErrorItem interface
+     * @return index   an object that implements the ErrorItem interface
      */
     Object   getChild ( integer index );
 
+    /**
+     * Returns a JSON object that is the complete set of attributes for this 
+     * item, where the array is of the form:
+     * 
+     \code
+     *   [
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string }
+     *                   etc.
+     *   ]
+     \endcode
+
+     * @return the JSON array that holds the complete set of attributes 
+     */
+    Object getAttributes();
     /**
      * Returns the error's ID value
      *  
@@ -161,7 +177,7 @@ interface ErrorItem {
      *
      * Returns an empty string if no such string exists.
      * 
-     * @param the ID of the string to be returned 
+     * @param errID   the ID of the string to be returned 
      * 
      * @return the string corresponding to the error ID
      */
@@ -195,8 +211,8 @@ interface Events {
      * Attach a handler for a specific, enumerated Readium event, such as 
      * READER_INITIALIZED
      * 
-     * @param the enumerated value of the event to be handled
-     * @param a callback function to be called when the event is emitted
+     * @param eventID    the enumerated value of the event to be handled
+     * @param callback   a callback function to be called when the event is emitted
      */
     void attachHandlerForEventID ( integer eventID, Object callback );
 
@@ -204,8 +220,8 @@ interface Events {
      * Removes a previously attached handler for a specific event.  The callback object
      * is used to identify the handler to be removed.
      * 
-     * @param eventID  The enumerated value of the event that was handled
-     * @param callback The callback function whch was to be called when event emitted
+     * @param eventID    the enumerated value of the event that was handled
+     * @param callback   the callback function whch was to be called when event emitted
      */
     void removeHandlerForEventID ( integer eventID, Object callback );
 
@@ -251,7 +267,7 @@ interface HighlightItem {
     /**
      * Returns the indicated child item.
      * 
-     * @param 0-based index of the child item
+     * @param index   0-based index of the child item
      * 
      * @return an object which implements the HighlightItem interface  
      */
@@ -260,7 +276,7 @@ interface HighlightItem {
     /**
      * Remove the specified child
      * 
-     * @param 0-based index of the item to be removed 
+     * @param index   0-based index of the item to be removed 
      * 
      * @return true if successful, false on error
      */
@@ -269,7 +285,7 @@ interface HighlightItem {
     /**
      * Set the color of this highlight (CSS color)
      * 
-     * @param the hexadecimal CSS syntax color to be set
+     * @param color   the hexadecimal CSS syntax color to be set
      */
     void setColor ( DOMString color );
 
@@ -334,8 +350,8 @@ interface Location {
      * 
      *    <c>precise</c> will be true if the CFI match is precise, else false
      *
-     * @param the other location to be compared to this one
-     * @param the function to be called with results
+     * @param otherLoc  the other location to be compared to this one
+     * @param callback  the function to be called with results
      *  
      */
     void compare ( DOMString otherLoc, Object callback);
@@ -357,7 +373,7 @@ interface ManifestItem {
     /**
      * Returns the specified ManifestChildItem, if any.
      * 
-     * @param 0-based index of the item to be fetched 
+     * @param index   0-based index of the item to be fetched 
      * 
      * @return an object which implements the ManifestItem interface 
      */
@@ -383,9 +399,9 @@ interface ManifestItem {
      * 
      \code
      *   [
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value }
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string }
      *                   etc.
      *   ]
      \endcode
@@ -404,7 +420,7 @@ interface MediaOverlay {
     /**
      * Check to see if the specified Location has a media overlay
      * 
-     * @param location the location to check for media overlay
+     * @param location   the location to check for media overlay
      */
     void hasMediaOverlay ( Location location );
 
@@ -450,49 +466,49 @@ interface MediaOverlay {
     /**
      * Turn on or off touch-to-play capability
      * 
-     * @param  true enables touch-to-play, false disables it
+     * @param enable   true enables touch-to-play, false disables it
      */
     void setTouchToPlay ( boolean enable );
 
     /**
      * Set the audio playback rate
      * 
-     * @param rate in the range 0.1 to 4.0 
+     * @param rate   the rate in the range 0.1 to 4.0 
      */
     void setPlaybackRate ( float rate );
 
     /**
      * Set the relative audio volume
      * 
-     * @param the relative volume in percent, from 0 to 100%
+     * @param volume   the relative volume in percent, from 0 to 100%
      */
     void setAudioVolume ( float volume );
 
     /**
      * Set the audio highlight color
      * 
-     * @param the color of the highlight, in hexadecimal CSS syntax
+     * @param color   the color of the highlight, in hexadecimal CSS syntax
      */
     void setHighlightColor ( DOMString color );
 
     /**
      * Enable or disable scroll during playback
      * 
-     * @param enable  Enabled if true, else disabled
+     * @param enable   Enabled if true, else disabled
      */
     void enableScrollDuringPlayback ( boolean enable );
 
     /**
      * Enable or disable automatic page turn
      * 
-     * @param enable  Enabled if true else false
+     * @param enable   Enabled if true else false
      */
     void enableAutomaticPageTurn ( boolean enable );
 
     /**
      * Enable or disable skippability
      * 
-     * @param enable  Enable if true, else false
+     * @param enable   Enable if true, else false
      */
     void enableSkippability ( boolean enable );
 }
@@ -513,7 +529,7 @@ interface MetadataItem {
     /**
      * Returns the specified MetadataItem, if any.
      * 
-     * @param 0-based index of the item to be fetched 
+     * @param index   0-based index of the item to be fetched 
      * 
      * @return an object which implements the MetadataItem interface 
      */
@@ -540,9 +556,9 @@ interface MetadataItem {
      * 
      \code
      *   [
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value }
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string }
      *                   etc.
      *   ]
      \endcode
@@ -578,7 +594,8 @@ interface MetadataItem {
      * Recursively searches the current item and its children for the metadata item
      * with the specified name and specified property.
      * 
-     * @param property   Name of the property
+     * @param elementName   the name of the element containng the property
+     * @param property      the name of the property
      * 
      * @return an object which implements the MetadataItem interface. Null if not found
      */
@@ -602,8 +619,7 @@ interface  NavDocItem {
     /**
      * Fetch the specified child of the current NavDocItem
      * Returns null if there isn't one
-     *    
-     * @param 0-based index of the item to be fetched 
+     *    index   0-based index of the item to be fetched 
      * 
      * @return an object which implements the NavDocItem interface 
      */
@@ -638,9 +654,9 @@ interface  NavDocItem {
      * 
      \code
      *   [
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value }
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string }
      *                   etc.
      *   ]
      \endcode
@@ -661,7 +677,7 @@ interface Navigator {
      * Navigate such that the specified location is at the top left of the 
      * displayed screen (if ltr doc, else top right).
      *
-     * @param the location to navigate to 
+     * @param loc   the location to navigate to 
      */
     void gotoLocation ( Location loc );
 
@@ -788,7 +804,7 @@ interface Navigator {
      *
      *    <c>result</c> will be the number of screens in the document\n  
      *
-     * @param the callback function to be called with the count
+     * @param callback   the callback function to be called with the count
      *  
      */
     void getScreenCount( Object callback );
@@ -797,7 +813,7 @@ interface Navigator {
      * Navigates to the specified screen (for reflowable) or page (for fixed
      * layout).  Note that the first screen in the document would be screen 0
      * 
-     * @param 0-based index of the screen to navigate to 
+     * @param screenNum   0-based index of the screen to navigate to 
      */
     void gotoScreen ( integer screenNum );
 
@@ -805,7 +821,7 @@ interface Navigator {
      * Returns the screen (or page) number for the specified location in the 
      * document.
      * 
-     * @param location whose screen is to be determined 
+     * @param loc   location whose screen is to be determined 
      * 
      * @return the 0-based index of the screen which contains the location
      */
@@ -815,9 +831,9 @@ interface Navigator {
      * Return the location of the upper-left (ltr documents) or upper-right (for rtl 
      * documents) of the specified screen.
      * 
-     * @param screen  The number of the screen
+     * @param screen  the number of the screen
      * 
-     * @return Location  The location for the specified screen
+     * @return the location for the specified screen
      */
     Location getLocationFromScreen ( integer screen );
 
@@ -836,8 +852,8 @@ interface Navigator {
      * of the box. All values in pixels with the origin of the coordinate system 
      * in the upper left of the current screen
      * 
-     * @param the starting location for the bounding box 
-     * @param the end location for the bounding box 
+     * @param start   the starting location for the bounding box 
+     * @param end     the end location for the bounding box 
      * 
      * @return  a JSON object of the form <c>{ "x":num, "y":num, "width":num, "height":num }</c>
      */
@@ -929,7 +945,7 @@ interface PageLayout {
      * Note: The reading system may ignore this setting, in which case
      * the return value is false.
      * 
-     * @param the desired orientation (see constants above) 
+     * @param orient   the desired orientation (see constants above) 
      *
      * @return true if not ignored else false
      */
@@ -947,7 +963,7 @@ interface PageLayout {
      * 
      * Note: This may fail if the document is set to Spread:None 
      * 
-     * @param the current layout mode (see constants above)
+     * @param spread   the current layout mode (see constants above)
      */
     boolean setRenditionSpread ( integer spread );
 
@@ -963,7 +979,7 @@ interface PageLayout {
      * 
      * Note: If the document is not reflowable the method will return false
      *
-     * @param the dessired rendition flow mode   (see constants above)
+     * @param mode   the desired rendition flow mode   (see constants above)
      * 
      * @return true if not ignored else false 
      */
@@ -1016,11 +1032,11 @@ interface PageLayout {
      * Note: Will fail if the document or reading system does not allow 
      * synthetic spreads
      *
-     * @param width of the gutter in CSS units
+     * @param width   width of the gutter in CSS units
      * 
      * @return true if successful else false 
      */
-    boolean setGutterWidth( DOMString gutter );
+    boolean setGutterWidth( DOMString width );
 }
 
 /**
@@ -1048,7 +1064,7 @@ interface ReadingSystem {
      * Provides method of injecting user/app stylesheet such as 
      * for setting night-mode or other non-default color schemes
      * 
-     * @param url to the stylesheet to be injected
+     * @param url   the url to the stylesheet to be injected
      * 
      * @return false if not supported
      */
@@ -1058,9 +1074,9 @@ interface ReadingSystem {
      * Provides a method for injecting a JavaScript library into the 
      * ReadingSystem at runtime.
      * 
-     * @param url to the JavaScript to be injected
+     * @param url   the url to the JavaScript to be injected
      * 
-     * @return boolean False if not supported
+     * @return false if not supported
      */
     boolean injectJavaScript ( DOMString url );
 
@@ -1092,9 +1108,9 @@ interface ReadingSystemObject {
      *  
      \code
      *   [
-     *      { module:name, version:commit-hash },
-     *      { module:name, version:commit-hash },
-     *      { module:name, version:commit-hash }
+     *      { "module":name, "version":commit-hash },
+     *      { "module":name, "version":commit-hash },
+     *      { "module":name, "version":commit-hash }
      *                     etc.
      *   ]
      \endcode
@@ -1119,6 +1135,8 @@ interface ReadingSystemObject {
      *      spine-scripting
      \endcode
      *
+     * @param feature   the feature to be tested for
+     * @param version   the version of the feature to be tested for (<i>discouraged</i>)
      * @return  true if feature supported else false
      */
     boolean hasFeature( DOMString feature, optional DOMString version );
@@ -1138,7 +1156,7 @@ interface Renderer {
      *
      * There can only be one call to this method per document.
      * 
-     * @param  the top-level div within which the document will be rendered
+     * @param div   the top-level div within which the document will be rendered
      */
     void initRenderer ( Object div );
 
@@ -1172,7 +1190,7 @@ interface Renderer {
     /**
      * Delete the specified highlight
      * 
-     * @param deletes the specified highlight from the collection 
+     * @param item   the item to be deleted from the collection 
      */
     void deleteHighlight( HighlightItem item );
 
@@ -1188,7 +1206,7 @@ interface Renderer {
      *
      *   <c>item</c> is the HighlightItem selected
      * 
-     * @param attaches the supplied handler to the highlights collection 
+     * @param handler   the supplied handler to the highlights collection 
      */
     void attachHandlerForHighlights( Object handler );
 
@@ -1196,7 +1214,7 @@ interface Renderer {
      * Remove handler for hit-testing on highlights.  The supplied object is 
      * used to identify the correct handler to remove.
      * 
-     * @param the handler to remove
+     * @param handler   the handler to remove
      */
     void removeHandlerForHighlights( Object handler );
 
@@ -1231,18 +1249,18 @@ interface Search {
      *   <c>results</c> is a JSON array of the form:\n
      \code
      *   [
-     *      { "start":loc, "end":loc, "result":text },
-     *      { "start":loc, "end":loc, "result":text },
-     *      { "start":loc, "end":loc, "result":text }
+     *      { "start":loc, "end":loc, "result":string },
+     *      { "start":loc, "end":loc, "result":string },
+     *      { "start":loc, "end":loc, "result":string }
       *                     etc.
      *   ]
      \endcode
      * 
-     * @param startLoc    If null, startLoc is the beginning of the document
-     * @param endLoc      If null, endLoc is the end of the document.
+     * @param startLoc    if null, startLoc is the beginning of the document
+     * @param endLoc      if null, endLoc is the end of the document.
      * @param modifiers   bitwise combination of flags (see above)
-     * @param findText    Text to find
-     * @param callback    Function to be called with the results
+     * @param findText    the text to find
+     * @param callback    the function to be called with the results
      */
     void  search ( Location startLoc, Location endLoc, integer modifiers, DOMString findText, Object callback );   
 
@@ -1289,16 +1307,16 @@ interface SpineItem {
     /**
      * Fetch the specified child of the current SpineItem
      *    
-     * @param 0-based index of the item to fetch 
+     * @param index   0-based index of the item to fetch 
      * 
-     * @return  the item, null if there isn't one
+     * @return  an object which implements the SpineItem interface
      */
-    NavDocItem  getChild( integer index );
+    Object  getChild( integer index );
 
     /**
      * Returns the DOM3 Node type value for the current item.
      * 
-     * @return DOM3 Nove type value for the item 
+     * @return DOM3 Node type value for the item 
      */
     integer   getNodeType();
 
@@ -1315,9 +1333,9 @@ interface SpineItem {
      * 
      \code
      *   [
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value },
-     *      { "name":name, "value":value }
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string },
+     *      { "name":string, "value":string }
      *                   etc.
      *   ]
      \endcode
@@ -1346,15 +1364,17 @@ interface TextRendering {
      *  
      * Note that this call will fail for fixed layout pages and return false.
      *
-     * @return true if the line-height was altered else false 
+     * @param height   the height in CSS length units between baselines
+     *
+     * @return true if the line-height was updated else false 
      */
-    boolean setLineHe ight();
+    boolean setLineHeight( float height );
 
     /**
      * Returns the number of columns the screen is laid out in.
      * 
      * Note that this is columns within a single page, not whether
-     * the screen is laid as a synthetic spread or not. @see synthetic spread
+     * the screen is laid as a synthetic spread or not. See synthetic spread
      * 
      * @return number of columns 
      */
@@ -1364,15 +1384,17 @@ interface TextRendering {
      * Sets the number of columns laid out within a single page.
      * 
      * Note that this is columns within a single page, not whether
-     * the screen is laid as a synthetic spread or not. @see synthetic spread
+     * the screen is laid as a synthetic spread or not. See synthetic spread
      * 
+     * @param nCol   the number of columns to set
+     *
      * @return true if successful false if not supported
      */
-    boolean setNumColumns();
+    boolean setNumColumns( integer nCol );
 
     /**
      * Returns the size of a column cap between columns on the page (not the gutter 
-     * between pages in a spread).  Will be empty if multiple columns are not 
+     * between pages in a spread).  Will be zero if multiple columns are not 
      * supported.
      * 
      * @return the column gap in CSS lengths. 
@@ -1385,7 +1407,7 @@ interface TextRendering {
      * Note that this will apply to the whole document, not just the 
      * current screen
      * 
-     * @param  type of justification (CSS enumeration: left, right, center or justify)
+     * @param justify   the type of justification (CSS enumeration: left, right, center or justify)
      *
      * @return true if successful false if not supported
      */
@@ -1412,7 +1434,7 @@ interface TextRendering {
      * 
      * Note: Will return false for fixed-layout documents
      * 
-     * @param desired margins in CSS syntax (all, or top, right, bottom, left)
+     * @param margins   desired margins in CSS syntax (all, or top, right, bottom, left)
      * 
      * @return true if successful false if ignored or not supported 
      */
@@ -1421,7 +1443,7 @@ interface TextRendering {
     /**
      * Sets the color of the current font
      * 
-     * @param the fontColor in hexadecimal CSS color syntax
+     * @param fontColor   the foreground font color in hexadecimal CSS color syntax
      */
     void setFontColor ( DOMString fontColor );
 
@@ -1446,7 +1468,7 @@ interface TextRendering {
      * 
      * Note: Will fail and return false for fixed layout spine items
      *
-     * @param the fontHeight in CSS length syntax
+     * @param fontHeight   the fontHeight in CSS length syntax
      * 
      * @return true if successful else false 
      */
@@ -1467,7 +1489,7 @@ interface TextRendering {
      * 
      * Note: Will fail for fixed layout spine items
      * 
-     * @param the desired font-face 
+     * @param fontFace   the desired font-face 
      * 
      * @return true if successful false if not supported
      */
@@ -1492,9 +1514,9 @@ interface Transform {
     /**
      * Sets the current zoom level for the page
      * 
-     * @param the desire zoom factor
+     * @param zoom   the desired zoom factor
      */
     void setZoom( float zoom );
-}
+};
 
 
