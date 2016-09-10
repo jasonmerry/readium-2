@@ -177,11 +177,9 @@ interface ErrorItem {
      *
      * Returns an empty string if no such string exists.
      * 
-     * @param errID   the ID of the string to be returned 
-     * 
      * @return the string corresponding to the error ID
      */
-    DOMString getErrorString ( integer errID );
+    DOMString getErrorString ();
 }
 
 /**
@@ -968,6 +966,10 @@ interface Package {
      
     /**
      * Returns a URL to the cover image from this package, if there is one
+     *
+     * COMMENT: This isn't the optimal way to do this because it means that 
+     * the book has to be opened and parsed to get the cover-image, but it 
+     * isn't obvious how to avoid that.
      * 
      * @return url to the location of the cover image 
      */
@@ -1110,7 +1112,28 @@ interface PageLayout {
  * device parameters, if supported
  * 
  */
+[Constructor( Object config )]
 interface ReadingSystem {
+
+    /**
+     * The constructor for the ReadingSystem object
+     * The constructor for the ReadingSystem interface allows a ReadingSystem
+     * object to be created.  The parameter is a JSON object of the form:
+     *
+     * 
+     \code
+     *   [
+     *      { "margin":string },
+     *      { "fontSize":string },
+     *      { "fontFace":string },
+     *      { "currentPage":number }
+     *                etc.
+     *   ]
+     \endcode
+     *  
+     * @param config   the JSON object that holds the configuration options
+     */
+    ReadingSystem ( Object config );
 
     /**
      * Initialize the renderer by passing in the div within which the 
@@ -1133,7 +1156,7 @@ interface ReadingSystem {
     /**
      * Returns a JSON object that has the size of the device, if available
      * 
-     * @return SON array with the size of the deveice as { "width":num, "height":num } 
+     * @return JSON array with the size of the device as { "width":num, "height":num } 
      */
     Object getDeviceSize();
 
