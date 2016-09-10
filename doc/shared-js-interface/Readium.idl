@@ -312,6 +312,72 @@ interface HighlightItem {
 }
 
 /**
+ * @brief Encapsulates the support for highlights
+ * 
+ */
+interface Highlights {
+
+    /**
+     * Returns the root highlight element which can be used to then 
+     * traverse the current set of highlights associated with the
+     * document.
+     * 
+     * @return the object which implements the HighlightItem interface 
+     */
+    Object  getHighlightsRoot();
+
+    /**
+     * Add a highlight to the current document. If the second location
+     * is NULL the first Location MUST be a range.
+     * 
+     * @param start    location to start the hightlight, or range if end param null
+     * @param end      end location for the hightlight. Can be null if start is range
+     * @param color    CSS-style color
+     * @param opacity  opacity in the range of 0..1
+     *
+     * @return the GUID that uniquely identifies this highlight
+     */
+    DOMString addHighlight ( Location start, Location end, DOMString color, float opacity );
+
+    /**
+     * Convenience method to clear all highlights in current document
+     */
+    void clearHighlights();
+
+    /**
+     * Delete the specified highlight
+     * 
+     * @param item   the item to be deleted from the collection 
+     */
+    void deleteHighlight( HighlightItem item );
+
+    /**
+     * Attach a handler that will be called when any highlight is selected. The 
+     * handler will be passed the HighlightItem that has been selected
+     *
+     * The signature of the callback function MUST be
+     *
+     *    <c>callback(Object:item)</c>
+     
+     * where
+     *
+     *   <c>item</c> is the HighlightItem selected
+     * 
+     * @param handler   the supplied handler to the highlights collection 
+     */
+    void attachHandlerForHighlights( Object handler );
+
+    /**
+     * Remove handler for hit-testing on highlights.  The supplied object is 
+     * used to identify the correct handler to remove.
+     * 
+     * @param handler   the handler to remove
+     */
+    void removeHandlerForHighlights( Object handler );
+
+}
+
+/**
  * @brief Represents a single location, which may be a single point or 
  * a range
  * 
@@ -1047,6 +1113,17 @@ interface PageLayout {
 interface ReadingSystem {
 
     /**
+     * Initialize the renderer by passing in the div within which the 
+     * renderer should inject its own rendering machinery (e.g. nested 
+     * iframes or similar)
+     *
+     * There can only be one call to this method per document.
+     * 
+     * @param div   the top-level div within which the document will be rendered
+     */
+    void initRenderer ( Object div );
+
+    /**
      * Get the name of the device (e.g browser or device)
      * 
      * @return the name of the device (if any) 
@@ -1141,84 +1218,6 @@ interface ReadingSystemObject {
      */
     boolean hasFeature( DOMString feature, optional DOMString version );
 };
-
-/**
- * @brief Encapsulates the various rendering capabilities, currently 
- * comprising only highlights
- * 
- */
-interface Renderer {
-
-    /**
-     * Initialize the renderer by passing in the div within which the 
-     * renderer should inject its own rendering machinery (e.g. nested 
-     * iframes or similar)
-     *
-     * There can only be one call to this method per document.
-     * 
-     * @param div   the top-level div within which the document will be rendered
-     */
-    void initRenderer ( Object div );
-
-    /**
-     * Returns the root highlight element which can be used to then 
-     * traverse the current set of highlights associated with the
-     * document.
-     * 
-     * @return the object which implements the HighlightItem interface 
-     */
-    Object  getHighlightsRoot();
-
-    /**
-     * Add a highlight to the current document. If the second location
-     * is NULL the first Location MUST be a range.
-     * 
-     * @param start    location to start the hightlight, or range if end param null
-     * @param end      end location for the hightlight. Can be null if start is range
-     * @param color    CSS-style color
-     * @param opacity  opacity in the range of 0..1
-     *
-     * @return the GUID that uniquely identifies this highlight
-     */
-    DOMString addHighlight ( Location start, Location end, DOMString color, float opacity );
-
-    /**
-     * Convenience method to clear all highlights in current document
-     */
-    void clearHighlights();
-
-    /**
-     * Delete the specified highlight
-     * 
-     * @param item   the item to be deleted from the collection 
-     */
-    void deleteHighlight( HighlightItem item );
-
-    /**
-     * Attach a handler that will be called when any highlight is selected. The 
-     * handler will be passed the HighlightItem that has been selected
-     *
-     * The signature of the callback function MUST be
-     *
-     *    <c>callback(Object:item)</c>
-     
-     * where
-     *
-     *   <c>item</c> is the HighlightItem selected
-     * 
-     * @param handler   the supplied handler to the highlights collection 
-     */
-    void attachHandlerForHighlights( Object handler );
-
-    /**
-     * Remove handler for hit-testing on highlights.  The supplied object is 
-     * used to identify the correct handler to remove.
-     * 
-     * @param handler   the handler to remove
-     */
-    void removeHandlerForHighlights( Object handler );
-
-}
 
 /**
  * @brief Interface to the search capability of the underlying implementation.
