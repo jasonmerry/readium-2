@@ -127,7 +127,7 @@ interface Document {
      * be null.  If there are other "custom" nav elements, the name will be in the first field and 
      * the second will be an object which implements the NavDocInterface and wraps that nav element
      *
-     * @return Object 
+     * @return a JSON array of the nav elms in the Document's NavDoc 
      */
     Object getNavElms();
 
@@ -643,21 +643,6 @@ interface MetadataItem {
     Object  getNode ();
 
     /**
-     * Returns the DOM3 Node type value for the element wrapped 
-     * by this item
-     * 
-     * @return the DOM3 Node type value  
-     */
-    integer   getNodeType();
-
-    /**
-     * Returns the short name of the element wrapped by this item 
-     * 
-     * @return the short name for this item's element 
-     */
-    DOMString getName();
-
-     /**
      * Returns a JSON object that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
@@ -699,14 +684,53 @@ interface MetadataItem {
 
     /**
      * Recursively searches the current item and its children for the metadata item
-     * with the specified name and specified property.
+     * with the specified namespace and element name.
+
+     * Returns a JSON array of matching elements, where the array is of the form:
      * 
+     \code
+     *   [
+     *      { "node":object },
+     *      { "node":object },
+     *      { "node":object }
+     *                   etc.
+     *   ]
+     \endcode
+     * 
+     * where the <c>object</c> implements the MetadataItem interface and wraps the matching 
+     * element found.
+     *
+     * @param namespace     the namespace of the element
      * @param elementName   the name of the element containng the property
-     * @param property      the name of the property
      * 
-     * @return an object which implements the MetadataItem interface. Null if not found
+     * @return a JSON array of matching elements
      */
-    Object findProperty ( DOMString elementName, DOMString property );
+    Object findElements ( DOMString namespace, DOMString elementName );
+
+    /**
+     * Recursively searches the current item and its children for the <c>meta</c> element
+     * with the specified namespace and property name.
+
+     * Returns a JSON array of matching elements, where the array is of the form:
+     * 
+     \code
+     *   [
+     *      { "node":object },
+     *      { "node":object },
+     *      { "node":object }
+     *                   etc.
+     *   ]
+     \endcode
+     * 
+     * where the <c>object</c> implements the MetadataItem interface and wraps the matching 
+     * element found.
+     *
+     * @param namespace     the namespace of the property
+     * @param elementName   the name of the the property
+     * 
+     * @return a JSON array of matching elements
+     */
+    Object findMetaElements ( DOMString namespace, DOMString propertyName );
 }
 
 /**

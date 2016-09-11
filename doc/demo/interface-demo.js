@@ -133,9 +133,51 @@
         console.log("nav elm name: " + navElms[n].name);
     }
 
-    // fetch the metadata
+    /*
+     * Metadata handling is quite specific to the application, so the metadata APIs 
+     * are relatively low-level so  app developers can just fetch what they are interested 
+     * in and do whatever they want with it  
+     */
 
-    // manipulate the page layout
+    // fetch the metadata root element
+    var opf = rs.getPackage();
+    var metaRoot = opf.getMetadataRoot();
+
+    // fetch the identifier(s)
+    var IDs = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "identifier");
+
+    for ( var t=0; t<IDs.length; t++ ) {
+        console.log("Identifier is " + IDs[t].getValue());
+    }
+    
+    // fetch the title(s) (required)  directly
+    var titles = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "title");
+
+    for ( var t=0; t<titles.length; t++ ) {
+        console.log("Title is " + titles[t].getValue());
+    }
+
+    // then fetch the language(s)
+    var langs = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "language");
+
+    for ( var l=0; l<langs.length; l++ ) {
+        console.log("Language is " + langs[l].getValue());
+    }
+
+    // finally, fetch the modified time
+    var modified = metaRoot.findMetaElements("http://purl.org/dc/terms/", "modified");
+
+    for ( var m=0; m<modified.length; m++ ) {
+        console.log("Modified time is " + modified[m].getValue());
+    }
+    
+    // beyond this the app developer can simply walk the set of metadata elements and f
+    // etch the attributes, etc.
+    
+
+    /*
+     * manipulate the page layout
+     *
 
 
     // set some text rendering parameters
