@@ -31,6 +31,13 @@ interface CollectionItem {
     Object  getChild( integer index );
 
     /**
+     * Retrieve the actual DOM node wrapped by this item
+     * 
+     * @return the actual DOM node wrapped by this item 
+     */
+    Object  getNode ();
+
+    /**
      * Returns the DOM3 Node type value for the current item.
      * 
      * @return the DOM3 Node type 
@@ -73,15 +80,6 @@ interface CollectionItem {
 interface Document {
 
     /**
-     * Basic method to open an EPUB.  Also performs any other initialization required.
-     *        
-     * @param url   the url to the EPUB to be opened
-     *
-     * @return true if successful, else false
-     */
-    boolean openBook ( DOMString url );
-
-    /**
      * Return the OPF package (or equivalent) for the document
      * 
      * @return an object that implements the Package interface 
@@ -103,12 +101,36 @@ interface Document {
     void clearErrorList();
    
     /**
-     * Fetch the an object that wraps the root element (an <c>xhtml</c> element) 
-     * of the associated navdoc for the EPUB. 
+     * Fetch the an object that provides high-level access to the associated 
+     * <c>nav</c> element in the NavDoc for the EPUB. 
      * 
-     * @return an object that implements the NavDocItem interface
+     * @return an object that implements the NavDoc interface
      */
-    Object getNavDoc();
+    Object getNavElm( DOMString epubType );
+
+    /**
+     * Returns a JSON array of the nav elements in the NavDoc
+     * item, where the array is of the form:
+     * 
+     \code
+     *   [
+     *      { "name":string, "node":object },
+     *      { "name":string, "node":object },
+     *      { "name":string, "node":object }
+     *                   etc.
+     *   ]
+     \endcode
+     *
+     * where the first three names MUST be "toc", "page-list" and "landmarks", in that order.
+     * Per spec, the TOC must exist and the object will be an object that implements the NavDocItem
+     * interface  However, the page-list and landmarks are optional, in which case the objects will
+     * be null.  If there are other "custom" nav elements, the name will be in the first field and 
+     * the second will be an object which implements the NavDocInterface and wraps that nav element
+     *
+     * @return Object 
+     */
+    Object getNavElms();
+
 }
 
 /**
@@ -270,6 +292,13 @@ interface HighlightItem {
      * @return an object which implements the HighlightItem interface  
      */
     Object getChild ( integer index );
+
+    /**
+     * Retrieve the actual DOM node wrapped by this item
+     * 
+     * @return the actual DOM node wrapped by this item 
+     */
+    Object  getNode ();
 
     /**
      * Remove the specified child
@@ -443,7 +472,14 @@ interface ManifestItem {
      */
     Object getChild( integer index );
 
+
     /**
+     * Retrieve the actual DOM node wrapped by this item
+     * 
+     * @return the actual DOM node wrapped by this item 
+     */
+    Object  getNode ();
+   /**
      * Returns the DOM3 Node type value for the current item.
      * 
      * @return the DOM3 Node type for the element wrapped by this item 
@@ -600,6 +636,13 @@ interface MetadataItem {
     Object getChild( integer index );
 
     /**
+     * Retrieve the actual DOM node wrapped by this item
+     * 
+     * @return the actual DOM node wrapped by this item 
+     */
+    Object  getNode ();
+
+    /**
      * Returns the DOM3 Node type value for the element wrapped 
      * by this item
      * 
@@ -668,7 +711,8 @@ interface MetadataItem {
 
 /**
  * @brief Interface to elements of the EPUB navigation document.  The intent of 
- * this interface is to allow callers to walk the tree of the NavDoc   
+ * this interface is to allow callers to either directly access the associated 
+ * nav element (if this is the top level NavDocItem or to walk the tree of the nav element   
  * 
  */
 interface  NavDocItem {
@@ -689,6 +733,14 @@ interface  NavDocItem {
      */
     NavDocItem  getChild( integer index );
 
+
+    /**
+     * Retrieve the actual DOM node wrapped by this item
+     * 
+     * @return the actual DOM node wrapped by this item 
+     */
+    Object  getNode ();
+
     /**
      * Returns the DOM3 Node type value for the element wrapped by 
      * the current item.
@@ -705,12 +757,12 @@ interface  NavDocItem {
     DOMString   getItemName();
 
     /**
-     * Returns the value of the epub:type attribute if any.
+     * Returns the href for this item, if any
      * Returns empty if there is no such attribute.
      * 
-     * @return the value (text) of the attribute.  Empty if none 
+     * @return the href for this item, empty if none 
      */
-    DOMString   getEPUBType();
+    DOMString   getHref();
 
     /**
      * Returns a JSON object that is the complete set of attributes for this 
@@ -885,11 +937,22 @@ interface Navigator {
      * Returns the screen (or page) number for the specified location in the 
      * document.
      * 
-     * @param loc   location whose screen is to be determined 
+     * The  callback parameter is the callback function that will be called
+     * when the screen number is found.\n
+     * The signature of the callback function must be:
+     *
+     *    <c>callback( integer:result )</c>
+     *
+     * where
+     *
+     *    <c>result</c> will be the 0-based index of the screen where the location is found  
+
+     * @param loc        the location whose screen is to be determined 
+     * @param callback   the callback function to be called with the count
      * 
      * @return the 0-based index of the screen which contains the location
      */
-    integer getScreenFromLocation ( Location loc );
+    integer getScreenFromLocation ( Location loc, Object callback );
 
     /**
      * Return the location of the upper-left (ltr documents) or upper-right (for rtl 
@@ -1147,6 +1210,15 @@ interface ReadingSystem {
     void initRenderer ( Object div );
 
     /**
+     * Basic method to open an EPUB.  Also performs any other initialization required.
+     *        
+     * @param url   the url to the EPUB to be opened
+     *
+     * @return an object that implements the Document interface.  Null if failed
+     */
+    Object openBook ( DOMString url );
+
+    /**
      * Get the name of the device (e.g browser or device)
      * 
      * @return the name of the device (if any) 
@@ -1334,6 +1406,13 @@ interface SpineItem {
      * @return  an object which implements the SpineItem interface
      */
     Object  getChild( integer index );
+
+    /**
+     * Retrieve the actual DOM node wrapped by this item
+     * 
+     * @return the actual DOM node wrapped by this item 
+     */
+    Object  getNode ();
 
     /**
      * Returns the DOM3 Node type value for the current item.
