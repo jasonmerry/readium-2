@@ -145,42 +145,76 @@
 
     // fetch the identifier(s)
     var IDs = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "identifier");
-
     for ( var t=0; t<IDs.length; t++ ) {
         console.log("Identifier is " + IDs[t].getValue());
     }
     
     // fetch the title(s) (required)  directly
     var titles = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "title");
-
     for ( var t=0; t<titles.length; t++ ) {
         console.log("Title is " + titles[t].getValue());
     }
 
     // then fetch the language(s)
     var langs = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "language");
-
     for ( var l=0; l<langs.length; l++ ) {
         console.log("Language is " + langs[l].getValue());
     }
 
     // finally, fetch the modified time
     var modified = metaRoot.findMetaElements("http://purl.org/dc/terms/", "modified");
-
     for ( var m=0; m<modified.length; m++ ) {
         console.log("Modified time is " + modified[m].getValue());
     }
     
-    // beyond this the app developer can simply walk the set of metadata elements and f
-    // etch the attributes, etc.
+    // beyond this the app developer can simply walk the set of metadata elements and 
+    // fetch the attributes, etc.
     
+    /* add some examples here... */
+
 
     /*
-     * manipulate the page layout
-     *
+     * Manipulating the page layout.  This is primarily about setting properties 
+     * whcih are then consumed and executed by the page layout machinery in the 
+     * RS implementation, so nothing very complex here. 
+     *  
+     * Note that the page layout properties are properties of the reading system, so 
+     * they are read/set via the reading system itself via the implementation of the 
+     * PageLayout interface 
+     */
 
+    // fetch the current renditon:layout property
+    var layout = rs.getRenditionLayout();
+    console.log("The layout is " + layout == REND_LAYOUT_PAGINATED ? "pre-paginated" : "relfowable");
 
-    // set some text rendering parameters
+    // user wants only  one-up, then if it isn't already set, then set it (just for example's sake)
+    if (rs.getRenditionSpread() != REND_SPREAD_NONE) {
+        rs.setRenditionSpread( REND_SPREAD_NONE );
+    }
+
+    // find out what the width of the usable area for page layout is
+    var width = rs.getLayoutWidth();
+    console.log("Layout area width is " + width + " pixels");
+
+    // then set it to 760px.  Since layout width is about the display, width is always in pixels (?)
+    rs.setLayoutWidth(760px);
+
+    // set the gutterwidth (the gap between pages in a spread
+    rs.setGutterWidth(50px);
+
+    // get the currrent margin settings. These can be either <all>,  or <top right bottom left>
+    var margins = rs.getMargins();
+    console.log("Current margins: " + margins );
+
+    // now set 4 different margins
+    rs.setMargins( "1em 2em 3em 2em");
+
+    /*
+     * text rendering parameters.  Like page layout, these are simple properties for the 
+     * most part that are handled by the implementation of the RS.  Also, like the PageLayout 
+     * properties, they are accessed via the ReadingSystem, which must implement the 
+     * TextRendering interface 
+     */
 
     // search
  

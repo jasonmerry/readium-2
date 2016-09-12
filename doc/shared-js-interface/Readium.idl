@@ -1161,7 +1161,7 @@ interface PageLayout {
      *
      * @return false if request not supported
      */
-    boolean setWidth ( integer width );
+    boolean setLayoutWidth ( integer width );
 
     /**
      * Returns the current width of the display surface (in pixels) available
@@ -1169,7 +1169,7 @@ interface PageLayout {
      * 
      * @return integer 
      */
-    integer getWidth ();
+    integer getLayoutWidth ();
 
     /**
      * Returns the gutter distance between synthetic spread pages
@@ -1192,6 +1192,26 @@ interface PageLayout {
      * @return true if successful else false 
      */
     boolean setGutterWidth( DOMString width );
+
+    /**
+     * Get the margins setting for the current document.
+     * 
+     * Note:  Will be empty for fixed-layout documents
+     * 
+     * @return the margins string in CSS fashion (all, or top, right, bottom, left)
+     */
+    DOMString getMargins();
+
+    /**
+     * Set the margins for the current document.
+     * 
+     * Note: Will return false for fixed-layout documents
+     * 
+     * @param margins   desired margins in CSS syntax (all, or top, right, bottom, left)
+     * 
+     * @return true if successful false if ignored or not supported 
+     */
+    boolean setMargins( DOMstring margins );
 }
 
 /**
@@ -1544,26 +1564,6 @@ interface TextRendering {
      * @return type of justification (CSS enumeration: left, right, center or justify)
      */
     DOMString getJustification();
-
-    /**
-     * Get the margins setting for the current document.
-     * 
-     * Note:  Will be empty for fixed-layout documents
-     * 
-     * @return the margins string in CSS fashion (all, or top, right, bottom, left)
-     */
-    DOMString getMargins();
-
-    /**
-     * Set the margins for the current document.
-     * 
-     * Note: Will return false for fixed-layout documents
-     * 
-     * @param margins   desired margins in CSS syntax (all, or top, right, bottom, left)
-     * 
-     * @return true if successful false if ignored or not supported 
-     */
-    boolean setMargins( DOMstring margins );
 
     /**
      * Sets the color of the current font
