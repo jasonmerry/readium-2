@@ -216,10 +216,126 @@
      * TextRendering interface 
      */
 
-    // search
- 
-    // highlights
+    // get the current line-height, then set a new value
+    console.log("Current line-height is " + rs.getLineHeight());
+
+    // note that setting the line height in fixed layout will fail
+    if (rs.setLineHeight("16pt") == false) {
+        console.log("Sorry, not supported");
+    }
+
+    // get the number of user-settable columns within a page.  Note that multiple columns within
+    // a page is not supported in Readium today due to how CSS columns are used to paginate
+    console.log("Current number of columns: " + rs.getNumColumns());
+
+    // note that setting the line height in fixed layout will fail
+    if (rs.setNumColumns("16pt") == false) {
+        console.log("Sorry, not supported");
+    }
+
+    // read and set the column gap.  Again, not supported in Readium at present
+    // to do..
     
+    // get and set the justification.  Not supported for FXL
+    console.log("Current justification is " + rs.getJustification());
+
+    if (rs.setJustification("right") == false {
+        console.log("Sorry, not supported");
+    }
+
+    // set font parameters
+    console.log("Current font-color is " + rs.getFontColor());
+    rs.setFontColor("pink");
+
+    console.log("Current font-height is " + rs.getFontHeight());
+
+    if (rs.setFontHeight("10em") == false {
+        console.log("Sorry, not supported");
+    }
+
+    console.log("Current font-face is " + rs.getFontFace());
+
+    if (rs.setFontFace("Critters") == false {
+        console.log("Sorry, not supported");
+    }
+
+    /*
+     * Thee are many variants and ways to search.  These are just a couple.
+     */
+
+    // find all occurrences of "Readium" in the current document
+    rs.search(null, null, "Readium", 0, "Readium", function (results) {
+
+        if ((results.length == 0)) {
+            console.log("Sorry, nothing found");
+        }
+        else {
+            for ( var r=0; r<results.length; r++ ) {
+                console.log(r + " found " + results[r].result + " at " + results[r].start );
+            }
+        }
+     });
+ 
+    // the example above doesn't allow the user to be told WHERE the result is.  However,
+    // one could navigate to the page to show them
+    rs.gotoLocation(result[r]);
+
+    // the above example finds all the occurrences.  Often one wants to find the NEXT occurrence
+    // and the following example shows how to do this (warning: hacky example code ahead)
+
+    var startSearch = null;
+    var firstSearch = true;
+
+    var scallback = function ( results ) {
+        if ((results.length == 0)) {
+            console.log("Sorry, nothing found");
+        }
+        else {
+            console.log(" found " + results[0].result + " at " + results[0].start );
+            // set the new start to the end of the previous result
+            startSearch = results[0].end;
+            firstSearch = false;
+        }
+    }
+    
+    do {
+ 
+        if (firstSearch == false) {
+            // query user("Do you want to search again?");
+            // if no then break;
+        }
+
+        rs.search(startSearch, null, "Readium", SEARCH_NEXT_RESULT, "Readium", scallback);
+
+    } while (stillSearching);
+
+    /* 
+     * highlights are managed by the ReadingSystem implementation, while the "bookmarks" and 
+     * "annotations" are the application-level use of highlights.  
+     */
+    
+    // mindlessly add a highlight for each selection
+    var selChangedHandler() = function {
+        console.log("Selection changed");
+
+        // get the current selection
+        var loc = rs.getCurrentSelection();
+
+        // create a highlight.  We assume the selection is a range (more later)
+        rs.createHighlight( loc, null, 
+    }
+
+    var highlightHandler() = function {
+
+    }
+
+    // first add a handler for selection changed and highighter events
+    rs.attachEventHandlerID(EV_SELECTION_CHANGED, selChangedHandler);
+    rs.attachHandlerForHighlights( highlightHandler );
+
+    // create a highlight from the current selection
+    rs.
+
     // media overlays
 
     // exit the app

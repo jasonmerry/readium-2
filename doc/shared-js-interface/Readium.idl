@@ -227,6 +227,8 @@ interface Events {
     const integer MEDIA_OVERLAY_TTS_SPEAK      = 110;  // "MediaOverlayTTSSpeak"
     const integer MEDIA_OVERLAY_TTS_STOP       = 111;  // "MediaOverlayTTSStop"
 
+    const integer EV_SELECTION_CHANGED         = 200;  // "SelectionChanged"
+
     /**
      * Attach a handler for a specific, enumerated Readium event, such as 
      * READER_INITIALIZED
@@ -246,13 +248,13 @@ interface Events {
     void removeHandlerForEventID ( integer eventID, Object callback );
 
     /**
-     * Add a handler for a named event (e.g. onmousedown) to a specific object
+     * Attach a handler for a named event (e.g. onmousedown) to a specific object
      * 
      * @param object     the object to which the handler should be attached
      * @param eventName  the name of the event
      * @param callback   the handler to be called
      */
-    void addHandlerForEvent ( Object object, DOMString eventName, Object callback );
+    void attachHandlerForEvent ( Object object, DOMString eventName, Object callback );
 
     /**
      * Remove a previously added handler from a specific object
@@ -364,7 +366,7 @@ interface Highlights {
      *
      * @return the GUID that uniquely identifies this highlight
      */
-    DOMString addHighlight ( Location start, Location end, DOMString color, float opacity );
+    DOMString createHighlight ( Location start, Location end, DOMString color, float opacity );
 
     /**
      * Convenience method to clear all highlights in current document
@@ -1370,6 +1372,7 @@ interface Search {
     const integer       SEARCH_WHOLE_WORD     = 4;
     const integer       SEARCH_IGNORE_CASE    = 8;
     const integer       SEARCH_IGNORE_DIACRIT = 16;
+    const integer       SEARCH_NEXT_RESULT    = 32;
 
     /**
      * Searches for ALL succesful results for the specified string between the 
@@ -1418,14 +1421,14 @@ interface Selection {
      * 
      * @return the text of the current selection.  Empty if there is no selection 
      */
-    DOMString   getText();
+    DOMString   getSelectedText();
 
     /**
      * Get current location of the selection
      * 
      * @return is empty if there is no current selection
      */
-    Location    getLocation();
+    Location    getSelectedLocation();
 }
 
 /**
@@ -1545,6 +1548,13 @@ interface TextRendering {
      * @return the column gap in CSS lengths. 
      */
     DOMString getColumnGap();
+
+    /**
+     * Set gap between CSS columns in CSS length units
+     * 
+     * @return true if supported else false
+     */
+    boolean setColumnGap();
 
     /**
      * Sets the justification for the text layout.
