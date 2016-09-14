@@ -10,9 +10,11 @@
  * 
  */
 
+
+
     var severity = { "Fatal", "Error", "Warning", "Info" };
 
-    }
+    
     /*
      * Allocate the ReadingSystem object.  Just pass in a trivial 
      * config object 
@@ -320,13 +322,24 @@
 
         // get the current selection
         var loc = rs.getCurrentSelection();
+        var text = rs. getSelectedText();
 
         // create a highlight.  We assume the selection is a range (more later)
-        rs.createHighlight( loc, null, 
+        var guid = rs.createHighlight( loc, null, "#FF0", 0.5 );
+        // tell the app to create an annotation
+        app.createAnnot( guid, text);
     }
 
-    var highlightHandler() = function {
+    // handle clicking on a highlight and mindlessly delete that highlight
+    var highlightHandler( item ) = function {
 
+        console.log("User clicked on a highlight.  GUID: " + item.getGUID() + " color: " + 
+                        item.getColor() + " opacity: " + item.getOpacity());
+
+        // now just delete the annot 
+        app.deleteAnnot(item.getGUID());
+        // then the highlight itself
+        rs.deleteHighlight(item);
     }
 
     // first add a handler for selection changed and highighter events
