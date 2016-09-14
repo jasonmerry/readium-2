@@ -530,25 +530,25 @@ interface MediaOverlay {
      * Start or restart the current media overlay fragment.
      * 
      */
-    void play();
+    void moPlay();
 
     /**
      * Stops the current fragment from playing
      * 
      */
-    void stop();
+    void moStop();
 
     /**
      * Pauses the current media overlay
      * 
      */
-    void pause();
+    void moPause();
 
     /**
      * Rewinds the media overlay to the start of the current fragment
      * 
      */
-    void reset();
+    void moReset();
 
     /**
      * Cause the playback to escape the current audio context
@@ -557,13 +557,20 @@ interface MediaOverlay {
     void escapeCurrentContext();
 
     /**
-     * Called when the media overlay handler encounters an error
+     * Called when the media overlay handler encounters an error.
+     * THe parameter is a function callback that must have the 
+     * signature
+     * function ( integer ID, Object json )
+     * 
+     * where
+     *     ID is one of the specified MO errors
+     *     json is an JSON array that provides more info
      * 
      * TODO:  Enumerate errors...
      * 
-     * @return integer 
+     * @param callback   A function that will be called on errors 
      */
-    integer onMOError();
+    void onMOError( Object callback  );
 
     /**
      * Turn on or off touch-to-play capability
@@ -573,11 +580,25 @@ interface MediaOverlay {
     void setTouchToPlay ( boolean enable );
 
     /**
+     * Returns the current state of the touch to play property
+     * 
+     * @return the state of the touch to play property 
+     */
+    boolean getTouchToPlay();
+
+    /**
      * Set the audio playback rate
      * 
      * @param rate   the rate in the range 0.1 to 4.0 
      */
     void setPlaybackRate ( float rate );
+
+    /**
+     * Returns the current value of the playback property
+     * 
+     * @return the state of the touch to play property 
+     */
+    float getPlaybackRate();
 
     /**
      * Set the relative audio volume
@@ -587,11 +608,25 @@ interface MediaOverlay {
     void setAudioVolume ( float volume );
 
     /**
+     * Returns the current value of the relative playback volume
+     * 
+     * @return the current value of the playback volume 
+     */
+    float getAudioVolume();
+
+    /**
      * Set the audio highlight color
      * 
      * @param color   the color of the highlight, in hexadecimal CSS syntax
      */
     void setHighlightColor ( DOMString color );
+
+    /**
+     * Return the currently selected highlight color
+     * 
+     * @return the currently selected highlight color
+     */
+    DOMString getHighlightColor();
 
     /**
      * Enable or disable scroll during playback
@@ -601,6 +636,13 @@ interface MediaOverlay {
     void enableScrollDuringPlayback ( boolean enable );
 
     /**
+     * Return the state of the enable-scroll-during-playback property
+     * 
+     * @return the state of the enable-scroll-during-playback property
+     */
+    boolean getEnableScrollDuringPlayback();
+
+    /**
      * Enable or disable automatic page turn
      * 
      * @param enable   Enabled if true else false
@@ -608,11 +650,25 @@ interface MediaOverlay {
     void enableAutomaticPageTurn ( boolean enable );
 
     /**
+     * Returns the current state of the enable-automatic-page-turn property
+     * 
+     * @return the current state of the enable-automatic-page-turn property 
+     */
+    boolean getEnableAutomaticPageTurn();
+
+    /**
      * Enable or disable skippability
      * 
      * @param enable   Enable if true, else false
      */
     void enableSkippability ( boolean enable );
+
+    /**
+     * Return the current state of the enable-skippability property
+     * 
+     * @return the current state of the enable-skippability property 
+     */
+    boolean getEnableSkippability();
 }
 
 /**

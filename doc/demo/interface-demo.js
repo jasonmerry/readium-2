@@ -346,10 +346,51 @@
     rs.attachEventHandlerID(EV_SELECTION_CHANGED, selChangedHandler);
     rs.attachHandlerForHighlights( highlightHandler );
 
-    // create a highlight from the current selection
-    rs.
+    /*
+     * media overlays are pretty straightforward as there are the usual VCR-style controls 
+     * and some properties that can be set.  The assumption here is that the MediaOverlay interface 
+     * has been implemented by the Reading System, but it could be implemented as a plugin or 
+     * some other modular piece that is obtained from the Reading System. 
+     */
 
-    // media overlays
+    // set up the error handler, which ideally does something more useful than just parroting the errID
+    var moError = function ( errID ) {
+        console.log("Error occurred during MO playback, ID = " + errID);
+    }
+
+    // first, see if there is Media Overlay on the current page
+    var moloc = rs.getScreenBegin();
+    if (rs.hasMediaOverlay(moloc) == false) {
+        console.log("Sorry, no media overlay on this page");
+    }
+
+    // the following calls would normally just be UI gesture-handlers, this is for demo only
+    rs.moPlay();
+
+    rs.moPause();
+
+    rs.moReset()
+
+    rs.moStop();
+
+    // a number of properties
+    rs.setTouchToPlay(true);
+
+    // talk realy really fast... ;-)
+    rs.setPlaybackRate(4);
+     
+    // set relative volume to a whisper
+    rs.setAudioVolume(20);
+
+    rs.setHighlightColor("#F00");
+
+    // don't let them scroll
+    rs.enableScrollDuringPlayback(false);
+
+    // and make them listen to the whole thing - no skipping!
+    rs.enableSkippability(false);
+
+    rs.enableAutomaticPageTurn(true);
 
     // exit the app
 
