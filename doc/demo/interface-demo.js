@@ -36,10 +36,10 @@
     // then init the renderer
     rs.initRenderer(container);
 
-    // now load the EPUB via the ReadingSytem:Document interface.  Just a local file
+    // now load the EPUB via the ReadingSytem:Document interface.  Get the URL to open from the app
     // Since we didn't specify a firstPage config item, it will simply open the document 
     // to the first page, which in this case is the cover page
-    var epubDoc = rs.openEPUB("MobyDick.epub");
+    rs.openEPUB(app.getEPUBURL());
 
     // check and see if any errors occurred
     var errorList = rs.getErrorRoot();
@@ -146,7 +146,7 @@
     var metaRoot = opf.getMetadataRoot();
 
     // fetch the identifier(s)
-    var IDs = metaRoot.findElements("http://purl.org/dc/elements/1.1/", "identifier");
+    var IDs = metaRoot.fust a local fileindElements("http://purl.org/dc/elements/1.1/", "identifier");
     for ( var t=0; t<IDs.length; t++ ) {
         console.log("Identifier is " + IDs[t].getValue());
     }
@@ -359,13 +359,16 @@
     }
 
     // first, see if there is Media Overlay on the current page
-    var moloc = rs.getScreenBegin();
-    if (rs.hasMediaOverlay(moloc) == false) {
+    var moLoc = rs.getScreenBegin();
+    if (rs.hasMediaOverlay(moLoc) == false) {
         console.log("Sorry, no media overlay on this page");
     }
 
     // the following calls would normally just be UI gesture-handlers, this is for demo only
     rs.moPlay();
+
+    // jump out of the current audio context
+    ro.escapeCurrentContext();
 
     rs.moPause();
 
@@ -382,7 +385,7 @@
     // set relative volume to a whisper
     rs.setAudioVolume(20);
 
-    rs.setHighlightColor("#F00");
+    rs.setMOHighlightColor("#F00");
 
     // don't let them scroll
     rs.enableScrollDuringPlayback(false);
@@ -392,9 +395,43 @@
 
     rs.enableAutomaticPageTurn(true);
 
-    // exit the app
+    /*
+     * exiting the app. 
+     * The following snippet assumes that the app has received the "closing the doc" event 
+     */
+    var state = {};
 
-    // re-open the book with saved settings
+    // get the EPUB URL from the app and store it
+    state["url"] = app.getEPUBURL();
+
+     // fetch whatever state properties the app wishes to be able to restore on next start
+
+    state["location" = rs.getScreenBegin();
+
+    // fetch the Media Overlay settings
+    state["touchToPlay"] = rs.getTouchToPlay();
+    state["playbackRate"] = rs.getPlaybackRate();
+    state["audioVolume"] = rs.getAudioVolume();
+    state["moHighlightColor"] = rs.getMOHighlightColor();
+    state["scrollDuringPlayback"] = rs.getScrollDuringPlayback();
+    state["enableSkippability"] = rs.getEnableSkippability();
+    state["automaticPageTurn"] = rs.getTouchToPlay();
+
+    // and so on.  Note that there has to be some app-logic to handle some of the state depending on the type of
+    // document (reflowable vs. FXL, etc.) but this is all fairly app-specific
+
+    // then have the app store the state however it wants
+    app.storeState( state );
+
+    // in a new session, re-open the book with saved settings
+    var state = app.retrieveState();
+
+    rs.openEPUB( state["url"] );
+
+    rs.gotoLocation( state["location"] );
+
+    // etc.
+
 
 
     

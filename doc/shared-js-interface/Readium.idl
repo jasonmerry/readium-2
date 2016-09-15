@@ -619,14 +619,14 @@ interface MediaOverlay {
      * 
      * @param color   the color of the highlight, in hexadecimal CSS syntax
      */
-    void setHighlightColor ( DOMString color );
+    void setMOHighlightColor ( DOMString color );
 
     /**
      * Return the currently selected highlight color
      * 
      * @return the currently selected highlight color
      */
-    DOMString getHighlightColor();
+    DOMString getMOHighlightColor();
 
     /**
      * Enable or disable scroll during playback
