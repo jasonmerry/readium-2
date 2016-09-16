@@ -38,13 +38,6 @@ interface CollectionItem {
     Object  getNode ();
 
     /**
-     * Returns the DOM3 Node type value for the current item.
-     * 
-     * @return the DOM3 Node type 
-     */
-    integer   getNodeType();
-
-    /**
      * Get the short name of the element that the CollectionItem wraps
      * 
      * @return string that is the name of the item's element 
@@ -52,19 +45,23 @@ interface CollectionItem {
     DOMString   getItemName();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this 
+     * Returns an array of objects that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
      \code
      *   [
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string }
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string }
      *                   etc.
      *   ]
      \endcode
-
-     * @return the JSON array that holds the complete set of attributes 
+     * where\n
+     *      <c>ns</c> is the fully qualified namespace\n
+     *      <c>name</c> is the short name of the attribute (without prefix or namespace)\n
+     *      <c>value</c> is the value of the attribute
+     *
+     * @return  an array of objects that hold the complete set of attributes 
      */
     Object getAttributes();
 
@@ -163,21 +160,26 @@ interface ErrorItem {
     Object   getChild ( integer index );
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this 
+     * Returns an array of objects that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
      \code
      *   [
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string }
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string }
      *                   etc.
      *   ]
      \endcode
-
-     * @return the JSON array that holds the complete set of attributes 
+     * where\n
+     *      <c>ns</c> is the fully qualified namespace\n
+     *      <c>name</c> is the short name of the attribute (without prefix or namespace)\n
+     *      <c>value</c> is the value of the attribute
+     *
+     * @return  an array of objects that hold the complete set of attributes 
      */
     Object getAttributes();
+
     /**
      * Returns the error's ID value
      *  
@@ -294,13 +296,6 @@ interface HighlightItem {
      * @return an object which implements the HighlightItem interface  
      */
     Object getChild ( integer index );
-
-    /**
-     * Retrieve the actual DOM node wrapped by this item
-     * 
-     * @return the actual DOM node wrapped by this item 
-     */
-    Object  getNode ();
 
     /**
      * Remove the specified child
@@ -481,12 +476,6 @@ interface ManifestItem {
      * @return the actual DOM node wrapped by this item 
      */
     Object  getNode ();
-   /**
-     * Returns the DOM3 Node type value for the current item.
-     * 
-     * @return the DOM3 Node type for the element wrapped by this item 
-     */
-    integer   getNodeType();
 
     /**
      * Returns the short name of the element which this item wraps 
@@ -496,19 +485,23 @@ interface ManifestItem {
     DOMString getName();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this 
+     * Returns an array of objects that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
      \code
      *   [
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string }
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string }
      *                   etc.
      *   ]
      \endcode
-
-     * @return the JSON array that holds the complete set of attributes 
+     * where\n
+     *      <c>ns</c> is the fully qualified namespace\n
+     *      <c>name</c> is the short name of the attribute (without prefix or namespace)\n
+     *      <c>value</c> is the value of the attribute
+     *
+     * @return  an array of objects that hold the complete set of attributes 
      */
     Object getAttributes();
 }
@@ -701,19 +694,23 @@ interface MetadataItem {
     Object  getNode ();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this 
+     * Returns an array of objects that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
      \code
      *   [
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string }
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string }
      *                   etc.
      *   ]
      \endcode
-
-     * @return the JSON array that holds the complete set of attributes 
+     * where\n
+     *      <c>ns</c> is the fully qualified namespace\n
+     *      <c>name</c> is the short name of the attribute (without prefix or namespace)\n
+     *      <c>value</c> is the value of the attribute
+     *
+     * @return  an array of objects that hold the complete set of attributes 
      */
     Object getAttributes();
 
@@ -744,14 +741,14 @@ interface MetadataItem {
      * Recursively searches the current item and its children for the metadata item
      * with the specified namespace and element name.
 
-     * Returns a JSON array of matching elements, where the array is of the form:
+     * Returns an array of matching elements, where the array is of the form:
      * 
      \code
      *   [
-     *      { "node":object },
-     *      { "node":object },
-     *      { "node":object }
-     *                   etc.
+     *      object,
+     *      object,
+     *      object
+     *       etc.
      *   ]
      \endcode
      * 
@@ -761,7 +758,7 @@ interface MetadataItem {
      * @param namespace     the namespace of the element
      * @param elementName   the name of the element containng the property
      * 
-     * @return a JSON array of matching elements
+     * @return an array of matching elements
      */
     Object findElements ( DOMString namespace, DOMString elementName );
 
@@ -769,14 +766,14 @@ interface MetadataItem {
      * Recursively searches the current item and its children for the <c>meta</c> element
      * with the specified namespace and property name.
 
-     * Returns a JSON array of matching elements, where the array is of the form:
+     * Returns an array of matching elements, where the array is of the form:
      * 
      \code
      *   [
-     *      { "node":object },
-     *      { "node":object },
-     *      { "node":object }
-     *                   etc.
+     *      object,
+     *      object,
+     *      object
+     *       etc.
      *   ]
      \endcode
      * 
@@ -786,7 +783,7 @@ interface MetadataItem {
      * @param namespace     the namespace of the property
      * @param elementName   the name of the the property
      * 
-     * @return a JSON array of matching elements
+     * @return an array of matching elements
      */
     Object findMetaElements ( DOMString namespace, DOMString propertyName );
 }
@@ -824,21 +821,6 @@ interface  NavDocItem {
     Object  getNode ();
 
     /**
-     * Returns the DOM3 Node type value for the element wrapped by 
-     * the current item.
-     * 
-     * @return the Node type value  
-     */
-    integer   getNodeType();
-
-    /**
-     * Get the name of the element
-     * 
-     * @return DOMString 
-     */
-    DOMString   getItemName();
-
-    /**
      * Returns the href for this item, if any
      * Returns empty if there is no such attribute.
      * 
@@ -847,19 +829,23 @@ interface  NavDocItem {
     DOMString   getHref();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this 
+     * Returns an array of objects that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
      \code
      *   [
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string }
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string }
      *                   etc.
      *   ]
      \endcode
-
-     * @return the JSON array that holds the complete set of attributes 
+     * where\n
+     *      <c>ns</c> is the fully qualified namespace\n
+     *      <c>name</c> is the short name of the attribute (without prefix or namespace)\n
+     *      <c>value</c> is the value of the attribute
+     *
+     * @return  an array of objects that hold the complete set of attributes 
      */
      Object getAttributes();
 }
@@ -1283,20 +1269,17 @@ interface ReadingSystem {
     /**
      * The constructor for the ReadingSystem object
      * The constructor for the ReadingSystem interface allows a ReadingSystem
-     * object to be created.  The parameter is a JSON object of the form:
+     * object to be created.  The parameter is a JavaScript object of the form:
      *
      * 
      \code
-     *   [
-     *      { "margin":string },
-     *      { "fontSize":string },
-     *      { "fontFace":string },
-     *      { "currentPage":number }
-     *                etc.
-     *   ]
+     *   var config = {};
+     *   config["margin"] = "1em";
+     *   config["line-height"] = "16pt";
+     *     etc.
      \endcode
      *  
-     * @param config   the JSON object that holds the configuration options
+     * @param config   the JavaScript object that holds the configuration options
      */
     ReadingSystem ( Object config );
 
@@ -1364,7 +1347,7 @@ interface ReadingSystem {
 
 /**
  * @brief The official EPUB reading system object. Interface defined in 
- * the EPUB spec here (provide link to 3.1)
+ * the EPUB spec here (@link http://www.idpf.org/epub/31/spec/epub-contentdocs-20160906.html#app-epubReadingSystem)
  * 
  */
 interface ReadingSystemObject {
@@ -1382,9 +1365,9 @@ interface ReadingSystemObject {
      *  
      \code
      *   [
-     *      { "module":name, "version":commit-hash },
-     *      { "module":name, "version":commit-hash },
-     *      { "module":name, "version":commit-hash }
+     *      { module:name, version:commit-hash },
+     *      { module:name, version:commit-hash },
+     *      { module:name, version:commit-hash }
      *                     etc.
      *   ]
      \endcode
@@ -1446,9 +1429,9 @@ interface Search {
      *   <c>results</c> is a JSON array of the form:\n
      \code
      *   [
-     *      { "start":loc, "end":loc, "result":string },
-     *      { "start":loc, "end":loc, "result":string },
-     *      { "start":loc, "end":loc, "result":string }
+     *      { start:loc, end:loc, result:string },
+     *      { start:loc, end:loc, result:string },
+     *      { start:loc, end:loc, result:string }
       *                     etc.
      *   ]
      \endcode
@@ -1518,13 +1501,6 @@ interface SpineItem {
     Object  getNode ();
 
     /**
-     * Returns the DOM3 Node type value for the current item.
-     * 
-     * @return DOM3 Node type value for the item 
-     */
-    integer   getNodeType();
-
-    /**
      * Get the Idref of the element
      * 
      * @return the ideref of the spine item wrapped in this item 
@@ -1532,20 +1508,24 @@ interface SpineItem {
     DOMString   getIdref();
 
     /**
-     * Returns a JSON object that is the complete set of attributes for this 
+     * Returns an array of objects that is the complete set of attributes for this 
      * item, where the array is of the form:
      * 
      \code
      *   [
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string },
-     *      { "name":string, "value":string }
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string },
+     *      { ns:string, name:string, value:string }
      *                   etc.
      *   ]
      \endcode
-
-     * @return the JSON array that holds the complete set of attributes 
-     */    
+     * where\n
+     *      <c>ns</c> is the fully qualified namespace\n
+     *      <c>name</c> is the short name of the attribute (without prefix or namespace)\n
+     *      <c>value</c> is the value of the attribute
+     *
+     * @return  an array of objects that hold the complete set of attributes 
+     */   
     Object getAttributes();
 } 
 

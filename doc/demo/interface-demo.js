@@ -19,7 +19,8 @@
      * Allocate the ReadingSystem object.  Just pass in a trivial 
      * config object 
      */
-    var config = [ {"margin":"1em" } ];
+    var config = {};
+    config.margin = "1em";
 
     var rs = new ReadingSystem(config);
 
@@ -409,13 +410,13 @@
     state["location" = rs.getScreenBegin();
 
     // fetch the Media Overlay settings
-    state["touchToPlay"] = rs.getTouchToPlay();
-    state["playbackRate"] = rs.getPlaybackRate();
-    state["audioVolume"] = rs.getAudioVolume();
-    state["moHighlightColor"] = rs.getMOHighlightColor();
-    state["scrollDuringPlayback"] = rs.getScrollDuringPlayback();
-    state["enableSkippability"] = rs.getEnableSkippability();
-    state["automaticPageTurn"] = rs.getTouchToPlay();
+    state.touchToPlay = rs.getTouchToPlay();
+    state.playbackRate = rs.getPlaybackRate();
+    state.audioVolume = rs.getAudioVolume();
+    state.moHighlightColor = rs.getMOHighlightColor();
+    state.scrollDuringPlayback = rs.getScrollDuringPlayback();
+    state.enableSkippability = rs.getEnableSkippability();
+    state.automaticPageTurn = rs.getTouchToPlay();
 
     // and so on.  Note that there has to be some app-logic to handle some of the state depending on the type of
     // document (reflowable vs. FXL, etc.) but this is all fairly app-specific
@@ -426,9 +427,9 @@
     // in a new session, re-open the book with saved settings
     var state = app.retrieveState();
 
-    rs.openEPUB( state["url"] );
+    rs.openEPUB( state.url );
 
-    rs.gotoLocation( state["location"] );
+    rs.gotoLocation( state.location );
 
     // etc.
 
