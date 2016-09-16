@@ -1277,7 +1277,9 @@ interface ReadingSystem {
 
     /**
      * Basic method to open an EPUB.  Also performs any other initialization required.
-     *        
+     *  
+     * TODO Needs to be asynchronous using Promises
+     *      
      * @param url   the url to the EPUB to be opened
      *
      * @return an object that implements the Document interface.  Null if failed
@@ -1299,14 +1301,20 @@ interface ReadingSystem {
     Object getDeviceSize();
 
     /**
-     * Provides method of injecting user/app stylesheet such as 
-     * for setting night-mode or other non-default color schemes
+     * Provides method of injecting user stylesheet document-level styling
      * 
      * @param url   the url to the stylesheet to be injected
      * 
      * @return false if not supported
      */
     boolean injectStyleSheet ( DOMString url );
+
+    /**
+     * Inect a user-agent style sheet 
+     * 
+     * @return true if successful else false 
+     */
+    boolean injectUAStyleSheet();
 
     /**
      * Provides a method for injecting a JavaScript library into the 
@@ -1418,7 +1426,7 @@ interface Search {
      *
      * @return an array of the results
      */
-    Object  search ( Location startLoc, Location endLoc, integer modifiers, DOMString findText );   
+    Object  search ( Location startLoc, Location endLoc, integer modifiers, DOMString textToFind );   
 
 }
 
@@ -1430,20 +1438,18 @@ interface Search {
 interface Selection {
 
     /**
-     * Fetch the current selection, if any
+     * Get the current selection.  The results are returned in
+     * an object whose form is 
      *
+     \code
+     *      { start:loc, end:loc, result:string },
+     \endcode
+     *   
      * QUESTION: What if it includes image(s), either raster or SVG?
      * 
-     * @return the text of the current selection.  Empty if there is no selection 
+     * @return is null if there is no current selection
      */
-    DOMString   getSelectedText();
-
-    /**
-     * Get current location of the selection
-     * 
-     * @return is empty if there is no current selection
-     */
-    Location    getSelectedLocation();
+    Object    getCurrentSelection();
 }
 
 /**

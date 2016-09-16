@@ -280,7 +280,7 @@
  
     // the example above doesn't allow the user to be told WHERE the result is.  However,
     // one could navigate to the page to show them
-    rs.gotoLocation(result[r]);
+    rs.gotoLocation(result[r].startLoc);
 
     // the above example finds all the occurrences.  Often one wants to find the NEXT occurrence
     // and the following example shows how to do this (warning: hacky example code ahead)
@@ -316,13 +316,12 @@
         console.log("Selection changed");
 
         // get the current selection
-        var loc = rs.getCurrentSelection();
-        var text = rs. getSelectedText();
-
+        var curSel = rs.getCurrentSelection();
+ 
         // create a highlight.  We assume the selection is a range (more later)
-        var guid = rs.createHighlight( loc, null, "#FF0", 0.5 );
+        var guid = rs.createHighlight( curSel.startLoc, curSel.endLoc, "#FF0", 0.5 );
         // tell the app to create an annotation
-        app.createAnnot( guid, text);
+        app.createAnnot( guid, curSel.text);
     }
 
     // handle clicking on a highlight and mindlessly delete that highlight
