@@ -424,14 +424,8 @@ interface Location {
 
     /**
      * Compare this location with another one. 
-     * The second parameter is the callback function that will be called
-     * when the comparison is complete.
      *
-     * The signature of the callback function must be:
-     *
-     \code
-     *    callback( integer:result, boolean:precise)
-     \endcode
+     * TDOD Implement with Promises
      *
      * where <c>result</c> will be\n 
      *      -1 if the supplied value is before this one\n
@@ -444,7 +438,7 @@ interface Location {
      * @param callback  the function to be called with results
      *  
      */
-    void compare ( DOMString otherLoc, Object callback);
+    void compare ( DOMString otherLoc );
 }
 
 /**
@@ -968,7 +962,7 @@ interface Navigator {
      * Returns the total number of screens in the current spine item (for reflowable 
      * documents).  Always returns 1 for fixed layout spine items.
      *
-     * QUESTION:  Should this be callback-based?
+     * TODO: Implement with Promises
      * 
      * @return number of screens in this spine item 
      */
@@ -978,54 +972,41 @@ interface Navigator {
      * Returns the total number of screens in the document (for reflowable documents)
      * or the total number of pages (for fixed layout documents).
      *
-     * The  parameter is the callback function that will be called
-     * when the count is complete.\n
-     * The signature of the callback function must be:
+     * TODO  Implement with Promises
      *
-     *    <c>callback( integer:result )</c>
-     *
-     * where
-     *
-     *    <c>result</c> will be the number of screens in the document\n  
-     *
-     * @param callback   the callback function to be called with the count
+     * @return count  the count of pages
      *  
      */
-    void getScreenCount( Object callback );
+    void getScreenCount();
 
     /**
      * Navigates to the specified screen (for reflowable) or page (for fixed
      * layout).  Note that the first screen in the document would be screen 0
      * 
+     * TODO  Implement with Promises
+     *
      * @param screenNum   0-based index of the screen to navigate to 
      */
     void gotoScreen ( integer screenNum );
 
     /**
      * Returns the screen (or page) number for the specified location in the 
-     * document.
-     * 
-     * The  callback parameter is the callback function that will be called
-     * when the screen number is found.\n
-     * The signature of the callback function must be:
+     * document
      *
-     *    <c>callback( integer:result )</c>
+     * TODO  Implement with Promises
      *
-     * where
-     *
-     *    <c>result</c> will be the 0-based index of the screen where the location is found  
-
      * @param loc        the location whose screen is to be determined 
-     * @param callback   the callback function to be called with the count
      * 
      * @return the 0-based index of the screen which contains the location
      */
-    integer getScreenFromLocation ( Location loc, Object callback );
+    integer getScreenFromLocation ( Location loc );
 
     /**
      * Return the location of the upper-left (ltr documents) or upper-right (for rtl 
      * documents) of the specified screen.
      * 
+     * TODO  Implement with Promises
+     *
      * @param screen  the number of the screen
      * 
      * @return the location for the specified screen
@@ -1418,15 +1399,9 @@ interface Search {
      * start and end locations.  
      * Note: If the search is backwards or the document is rtl, then the start location
      * will be closer to the end of the document than the end location
-     * Callback is the function to be called with the results.
-     * 
-     * The signature of the callback function MUST be
-     \code
-     *    callback(Object:results)
-     \endcode
-     * where
+     * The returned object is the results.
      *
-     *   <c>results</c> is a JSON array of the form:\n
+     *   <c>results</c> is an array of the form:\n
      \code
      *   [
      *      { start:loc, end:loc, result:string },
@@ -1440,9 +1415,10 @@ interface Search {
      * @param endLoc      if null, endLoc is the end of the document.
      * @param modifiers   bitwise combination of flags (see above)
      * @param findText    the text to find
-     * @param callback    the function to be called with the results
+     *
+     * @return an array of the results
      */
-    void  search ( Location startLoc, Location endLoc, integer modifiers, DOMString findText, Object callback );   
+    Object  search ( Location startLoc, Location endLoc, integer modifiers, DOMString findText );   
 
 }
 

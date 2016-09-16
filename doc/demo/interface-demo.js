@@ -267,17 +267,16 @@
      */
 
     // find all occurrences of "Readium" in the current document
-    rs.search(null, null, "Readium", 0, "Readium", function (results) {
+    var results = rs.search(null, null, "Readium", 0, "Readium"); 
 
-        if ((results.length == 0)) {
-            console.log("Sorry, nothing found");
-        }
-        else {
-            for ( var r=0; r<results.length; r++ ) {
-                console.log(r + " found " + results[r].result + " at " + results[r].start );
-            }
-        }
-     });
+    if ((results.length == 0)) {
+        console.log("Sorry, nothing found");
+    }
+    else {
+       for ( var r=0; r<results.length; r++ ) {
+           console.log(r + " found " + results[r].result + " at " + results[r].start );
+       }
+    } 
  
     // the example above doesn't allow the user to be told WHERE the result is.  However,
     // one could navigate to the page to show them
@@ -287,30 +286,27 @@
     // and the following example shows how to do this (warning: hacky example code ahead)
 
     var startSearch = null;
-    var firstSearch = true;
+  
+    do {
+ 
+ 
+        results = rs.search(startSearch, null, "Readium", SEARCH_NEXT_RESULT, "Readium");
 
-    var scallback = function ( results ) {
         if ((results.length == 0)) {
             console.log("Sorry, nothing found");
         }
         else {
             console.log(" found " + results[0].result + " at " + results[0].start );
-            // set the new start to the end of the previous result
-            startSearch = results[0].end;
-            firstSearch = false;
-        }
-    }
-    
-    do {
- 
-        if (firstSearch == false) {
+
             // query user("Do you want to search again?");
             // if no then break;
+           
+            // set the new start to the end of the previous result
+            startSearch = results[0].end;
+            
         }
 
-        rs.search(startSearch, null, "Readium", SEARCH_NEXT_RESULT, "Readium", scallback);
-
-    } while (stillSearching);
+    } while (true);
 
     /* 
      * highlights are managed by the ReadingSystem implementation, while the "bookmarks" and 
