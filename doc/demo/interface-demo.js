@@ -302,10 +302,8 @@
             // if no then break;
            
             // set the new start to the end of the previous result
-            startSearch = results[0].end;
-            
+            startSearch = results[0].end;           
         }
-
     } while (true);
 
     /* 
