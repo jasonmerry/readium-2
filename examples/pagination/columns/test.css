@@ -17,9 +17,20 @@ body {
   margin: 0 !important;
   padding: 0 !important;
 
+  column-count: 1;
   column-gap: 0;
-  columns: auto 1;
+  column-width: auto;
   column-fill: auto;
+
+  /* firefox still needs these to be prefixed */
+  -moz-column-count: 1;
+  -moz-column-gap: 0;
+  -moz-column-width: auto;
+  -moz-column-fill: auto;
+
+  /* safari needs this, 'auto' doesn't work for some reason */
+  -webkit-column-width: 1vw;
+
   height: 100%;
 }
 
