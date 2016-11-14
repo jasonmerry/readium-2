@@ -1,0 +1,29 @@
+html {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+body {
+  /* Note:
+    Getting the margin right is tricky with this pagination method:
+    the margin and padding absolutely needs to be reset for the columns to work
+    right.
+    If the reference document were loaded in an iframe then we get a level of
+    seperation where this might not be necessary
+   */
+  margin: 0 !important;
+  padding: 0 !important;
+
+  column-gap: 0;
+  columns: auto 1;
+  column-fill: auto;
+  height: 100%;
+}
+
+main {
+  /* The margin that was there originally on the body. See the note above. */
+  margin: 2em;
+}
